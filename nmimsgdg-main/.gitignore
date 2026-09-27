@@ -1,0 +1,13 @@
+# Node.js
+node_modules/
+
+# Large 3D files
+models/*.obj
+models/*.rar
+models/*.zip
+*.obj
+**/*.obj
+
+# OS
+.DS_Store
+Thumbs.db

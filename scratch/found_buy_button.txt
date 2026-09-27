@@ -1,0 +1,9 @@
+
+--- POS 506906 ---
+ bg-[#0058A3] hover:bg-blue-800 text-white text-[11px] font-bold transition-all shadow-sm active:scale-95 flex items-center justify-center space-x-1 cursor-pointer",children:b.jsx("span",{children:"🛒 Buy"})}),b.jsx("button",{onClick:$=>{$.stopPropagation(),_(X),F(null)},className:"py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-[11px] font-bold transition-all shadow-sm active:sca
+--- POS 508158 ---
+n:[b.jsxs("div",{children:[b.jsx("span",{className:"text-[10px] font-black uppercase text-[#FFDB00] block",children:"Marketplace Checkout"}),b.jsx("h3",{className:"font-extrabold text-base",children:"Buy Secondhand Furniture"})]}),b.jsx("button",{onClick:()=>v(null),className:"w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 text-white font-bold text-sm flex items-center justify-center",children
+--- POS 1557179 ---
+{onClick:Pe=>{Pe.stopPropagation(),Y(te)},className:"flex-1 py-1.5 rounded-xl bg-[#0051BA] hover:bg-blue-700 text-white font-extrabold text-[11px] shadow-sm transition-all cursor-pointer",children:"🛒 Buy"}),te.swapAvailable&&b.jsx("button",{onClick:Pe=>{Pe.stopPropagation(),ie(te)},className:"flex-1 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-[11px] shadow-sm
+--- POS 1574252 ---
+.jsxs("div",{children:[b.jsx("span",{className:"text-[10px] font-black uppercase text-[#FFDA1A] block",children:"4. Transaction Mechanism"}),b.jsx("h3",{className:"font-extrabold text-base",children:"Buy Secondhand Furniture"})]}),b.jsx("button",{onClick:()=>{Y(null),Se({deliveryMethod:"delivery",paymentMethod:"upi",isConfirmed:!1,orderId:""})},className:"w-8 h-8 rounded-full bg-white/20 hover:bg-

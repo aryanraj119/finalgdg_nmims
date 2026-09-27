@@ -1,0 +1,943 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <link rel="icon" type="image/png" href="/assets/ikea-logo.png" />
+  <title>Login to your IKEA account — IKEA India</title>
+  <script src="/ecommerce-api.js"></script>
+  <script src="/ecommerce-ui.js"></script>
+
+  <style>
+    :root {
+      --ikea-blue: #0058a3;
+      --ikea-blue-hover: #004f93;
+      --ikea-yellow: #ffdb00;
+      --ikea-dark: #111111;
+      --ikea-border: #dfdfdf;
+      --ikea-border-focus: #111111;
+      --ikea-text-muted: #767676;
+      --ikea-text-subtle: #484848;
+      --ikea-green: #00853d;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: #ffffff;
+      color: var(--ikea-dark);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .auth-page-layout {
+      display: flex;
+      flex: 1;
+      min-height: 100vh;
+      width: 100%;
+    }
+
+    /* LEFT BLUE PANEL (Matches IKEA Auth Brand Design) */
+    .auth-blue-panel {
+      width: 42%;
+      min-width: 360px;
+      background-color: var(--ikea-blue);
+      color: #ffffff;
+      padding: 40px 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .panel-top-nav {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .panel-back-btn {
+      color: #ffffff;
+      background: none;
+      border: none;
+      font-size: 24px;
+      line-height: 1;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      transition: background 0.2s;
+    }
+
+    .panel-back-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .panel-logo-link {
+      display: inline-flex;
+      align-items: center;
+      background: #ffffff;
+      padding: 4px 10px;
+      border-radius: 4px;
+      text-decoration: none;
+    }
+
+    .panel-logo-img {
+      height: 28px;
+      width: auto;
+      object-fit: contain;
+      display: block;
+    }
+
+    .panel-hero-title {
+      font-size: 38px;
+      font-weight: 800;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+      margin: auto 0;
+      max-width: 400px;
+    }
+
+    .hero-highlight {
+      color: var(--ikea-yellow);
+    }
+
+    .panel-footer-legal {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.6;
+    }
+
+    .panel-footer-legal a {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+
+    /* RIGHT WHITE PANEL (Form Views) */
+    .auth-form-panel {
+      flex: 1;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+      overflow-y: auto;
+    }
+
+    .form-container-card {
+      width: 100%;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .form-step-view {
+      display: none;
+      animation: fadeIn 0.25s ease-out;
+    }
+
+    .form-step-view.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .form-instruction-text {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ikea-dark);
+      line-height: 1.5;
+      margin-bottom: 28px;
+    }
+
+    .form-field-group {
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: #111111;
+      margin-bottom: 8px;
+    }
+
+    .form-input-text {
+      width: 100%;
+      height: 48px;
+      border: 1px solid var(--ikea-border);
+      border-radius: 4px;
+      padding: 0 16px;
+      font-size: 15px;
+      color: #111111;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      background: #ffffff;
+    }
+
+    .form-input-text:focus {
+      border-color: var(--ikea-border-focus);
+      box-shadow: 0 0 0 1px #111111;
+    }
+
+    .form-input-text.error {
+      border-color: #e00751;
+    }
+
+    .form-error-msg {
+      font-size: 12px;
+      color: #e00751;
+      font-weight: 600;
+      margin-top: 6px;
+      display: none;
+    }
+
+    /* Buttons */
+    .btn-black-pill {
+      width: 100%;
+      height: 48px;
+      background-color: #111111;
+      color: #ffffff;
+      border: none;
+      border-radius: 9999px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+
+    .btn-black-pill:hover {
+      background-color: #333333;
+    }
+
+    .btn-black-pill:active {
+      transform: scale(0.98);
+    }
+
+    .btn-outline-pill {
+      width: 100%;
+      height: 48px;
+      background-color: #ffffff;
+      color: #111111;
+      border: 1px solid #111111;
+      border-radius: 9999px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+      transition: background-color 0.2s, transform 0.1s;
+      text-decoration: none;
+    }
+
+    .btn-outline-pill:hover {
+      background-color: #f5f5f5;
+    }
+
+    .btn-outline-pill:active {
+      transform: scale(0.98);
+    }
+
+    /* Secondary Action Links */
+    .form-link-action {
+      display: block;
+      text-align: center;
+      margin-top: 18px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #111111;
+      text-decoration: underline;
+      cursor: pointer;
+      background: none;
+      border: none;
+      width: 100%;
+    }
+
+    .form-link-action:hover {
+      color: var(--ikea-blue);
+    }
+
+    /* Divider */
+    .auth-or-divider {
+      display: flex;
+      align-items: center;
+      margin: 32px 0 24px 0;
+      color: var(--ikea-text-muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .auth-or-divider::before,
+    .auth-or-divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--ikea-border);
+    }
+
+    .auth-or-divider span {
+      padding: 0 16px;
+    }
+
+    .create-account-heading {
+      font-size: 13px;
+      font-weight: 700;
+      color: #111111;
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    /* Step 2 OTP Specific Styles */
+    .otp-resend-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 6px;
+      font-size: 12px;
+    }
+
+    .otp-timer-note {
+      color: var(--ikea-text-muted);
+      font-size: 12px;
+      margin-top: 6px;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 20px 0 24px 0;
+      font-size: 13px;
+      font-weight: 500;
+      color: #111111;
+      cursor: pointer;
+    }
+
+    .checkbox-row input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--ikea-blue);
+      cursor: pointer;
+    }
+
+    .info-tooltip-icon {
+      color: var(--ikea-text-muted);
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    /* Success Screen */
+    .auth-success-box {
+      text-align: center;
+      padding: 24px 0;
+    }
+
+    .success-checkmark-circle {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: #e6f6ec;
+      color: var(--ikea-green);
+      font-size: 32px;
+      font-weight: 900;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    /* Responsive */
+    @media (max-width: 860px) {
+      .auth-page-layout {
+        flex-direction: column;
+      }
+      .auth-blue-panel {
+        width: 100%;
+        min-width: unset;
+        padding: 24px 20px;
+      }
+      .panel-hero-title {
+        font-size: 26px;
+        margin: 20px 0;
+      }
+      .panel-footer-legal {
+        display: none;
+      }
+      .auth-form-panel {
+        padding: 32px 16px 60px 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="auth-page-layout">
+
+    <!-- 1. LEFT BLUE PANEL (Brand) -->
+    <div class="auth-blue-panel">
+      <div class="panel-top-nav">
+        <button class="panel-back-btn" onclick="handleGoBack()" title="Go back">
+          &larr;
+        </button>
+        <a href="/" class="panel-logo-link" title="IKEA Home">
+          <img src="/assets/image.png" alt="IKEA" class="panel-logo-img" />
+        </a>
+      </div>
+
+      <div class="panel-hero-title" id="panel-hero-title-text">
+        <span class="hero-highlight">Login</span> to your IKEA account.
+      </div>
+
+      <div class="panel-footer-legal">
+        IKEA.in - <a href="javascript:void(0)" onclick="alert('IKEA Cookie Policy: Cookies are used to optimize shopping bag experience and user sessions.')">Cookie Policy</a> and <a href="javascript:void(0)" onclick="alert('IKEA Privacy Policy: Your data is secure with 256-bit SSL encryption.')">Privacy Policy</a><br />
+        &copy; Inter IKEA Systems B.V. 1999-2026
+      </div>
+    </div>
+
+    <!-- 2. RIGHT WHITE PANEL (Forms) -->
+    <div class="auth-form-panel">
+      <div class="form-container-card">
+
+        <!-- VIEW 1: ENTER EMAIL / PHONE (Screenshot 3) -->
+        <div class="form-step-view active" id="view-step-identifier">
+          <div class="form-instruction-text">
+            Please enter your email or mobile number to receive a one-time code.
+          </div>
+
+          <form onsubmit="handleIdentifierSubmit(event)">
+            <div class="form-field-group">
+              <label class="form-label" for="auth-identifier-input">Email address or mobile number</label>
+              <input
+                type="text"
+                id="auth-identifier-input"
+                class="form-input-text"
+                placeholder="e.g. ananyasingh561329@gmail.com"
+                required
+                autofocus
+              />
+              <div class="form-error-msg" id="identifier-error-msg">Please enter a valid email address or 10-digit mobile number.</div>
+            </div>
+
+            <button type="submit" class="btn-black-pill" id="btn-identifier-continue">
+              Continue
+            </button>
+          </form>
+
+          <button class="form-link-action" onclick="switchToPasswordView()">
+            Sign in with password
+          </button>
+
+          <button class="form-link-action" style="color: #0058a3; margin-top: 10px; font-weight: 700;" onclick="switchToAdminView()">
+            🔐 Admin Login
+          </button>
+
+          <div class="auth-or-divider">
+            <span>Or</span>
+          </div>
+
+          <div class="create-account-heading">
+            Do not have an IKEA account yet? Create one now:
+          </div>
+
+          <button class="btn-outline-pill" onclick="openRegistration('home')">
+            I'm buying for my home
+          </button>
+          <button class="btn-outline-pill" onclick="openRegistration('company')">
+            I'm buying for my company
+          </button>
+        </div>
+
+        <!-- VIEW 2: ENTER OTP CODE (Screenshot 2) -->
+        <div class="form-step-view" id="view-step-otp">
+          <div class="form-instruction-text">
+            We just sent a one-time login code to <strong id="otp-destination-display">ananyasingh561329@gmail.com</strong>, please check your inbox.
+            <div style="margin-top: 4px;">
+              <a href="javascript:void(0)" onclick="resendOtpCode()" style="color:#111;text-decoration:underline;font-size:13px;font-weight:700;">Didn't receive a code?</a>
+            </div>
+          </div>
+
+          <form onsubmit="handleOtpSubmit(event)">
+            <div class="form-field-group">
+              <label class="form-label" for="otp-code-input">One-time code</label>
+              <input
+                type="text"
+                id="otp-code-input"
+                class="form-input-text"
+                maxlength="6"
+                placeholder="Enter 6-digit code (e.g. 582910)"
+                required
+              />
+              <div class="otp-timer-note" id="otp-countdown-text">
+                Send new code in [<span id="otp-timer-seconds">178</span>] seconds
+              </div>
+              <div class="form-error-msg" id="otp-error-msg">Invalid or expired code. Please enter the 6-digit verification code.</div>
+            </div>
+
+            <label class="checkbox-row">
+              <input type="checkbox" id="stay-signed-in-cb" checked />
+              <span>Stay signed in until you sign out</span>
+              <span class="info-tooltip-icon" title="Keep your shopping bag, member discounts, and address saved on this device.">&#9432;</span>
+            </label>
+
+            <button type="submit" class="btn-black-pill" id="btn-otp-continue">
+              Continue
+            </button>
+          </form>
+
+          <button class="form-link-action" onclick="switchToStep1()">
+            &larr; Use a different email or mobile
+          </button>
+        </div>
+
+        <!-- VIEW 3: PASSWORD LOGIN -->
+        <div class="form-step-view" id="view-step-password">
+          <div class="form-instruction-text">
+            Enter your password to sign in to your IKEA account.
+          </div>
+
+          <form onsubmit="handlePasswordSubmit(event)">
+            <div class="form-field-group">
+              <label class="form-label" for="pwd-email-input">Email address or mobile number</label>
+              <input
+                type="text"
+                id="pwd-email-input"
+                class="form-input-text"
+                placeholder="name@example.com"
+                required
+              />
+            </div>
+
+            <div class="form-field-group">
+              <label class="form-label" for="pwd-password-input">Password</label>
+              <input
+                type="password"
+                id="pwd-password-input"
+                class="form-input-text"
+                placeholder="Enter your password"
+                required
+              />
+              <div class="form-error-msg" id="password-error-msg">Invalid password. Please try again.</div>
+            </div>
+
+            <label class="checkbox-row">
+              <input type="checkbox" checked />
+              <span>Stay signed in until you sign out</span>
+            </label>
+
+            <button type="submit" class="btn-black-pill">
+              Sign in
+            </button>
+          </form>
+
+          <button class="form-link-action" onclick="switchToStep1()">
+            Sign in with one-time code instead
+          </button>
+        </div>
+
+        <!-- VIEW 4: JOIN IKEA FAMILY (Registration) -->
+        <div class="form-step-view" id="view-step-register">
+          <div class="form-instruction-text">
+            Create your <strong id="register-type-title">IKEA Family</strong> profile to unlock member discounts, reward points, and saved designs.
+          </div>
+
+          <form onsubmit="handleRegisterSubmit(event)">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+              <div>
+                <label class="form-label" for="reg-fname">First name</label>
+                <input type="text" id="reg-fname" class="form-input-text" placeholder="First name" required />
+              </div>
+              <div>
+                <label class="form-label" for="reg-lname">Last name</label>
+                <input type="text" id="reg-lname" class="form-input-text" placeholder="Last name" required />
+              </div>
+            </div>
+
+            <div class="form-field-group">
+              <label class="form-label" for="reg-email">Email address</label>
+              <input type="email" id="reg-email" class="form-input-text" placeholder="name@example.com" required />
+            </div>
+
+            <div class="form-field-group">
+              <label class="form-label" for="reg-phone">Mobile number</label>
+              <input type="tel" id="reg-phone" class="form-input-text" placeholder="10-digit mobile number" required />
+            </div>
+
+            <div class="form-field-group">
+              <label class="form-label" for="reg-store">Preferred IKEA Store</label>
+              <select id="reg-store" class="form-input-text" style="cursor:pointer;">
+                <option value="Navi Mumbai">IKEA Navi Mumbai</option>
+                <option value="Hyderabad">IKEA Hyderabad</option>
+                <option value="Bengaluru - Nagasandra">IKEA Bengaluru (Nagasandra)</option>
+                <option value="Worli City Store">IKEA Worli City Store (Mumbai)</option>
+                <option value="R City Mall">IKEA R City Mall (Ghatkopar)</option>
+              </select>
+            </div>
+
+            <label class="checkbox-row" style="margin-top:0;">
+              <input type="checkbox" checked required />
+              <span style="font-size:12px;line-height:1.4;">I agree to the IKEA Family terms & conditions and would like to receive member discounts and offers.</span>
+            </label>
+
+            <button type="submit" class="btn-black-pill" style="background:#0058A3;">
+              Join IKEA Family (Free)
+            </button>
+          </form>
+
+          <button class="form-link-action" onclick="switchToStep1()">
+            Already have an account? Sign in
+          </button>
+        </div>
+
+        <!-- VIEW 5: ADMIN LOGIN (Demo / Prototype) -->
+        <div class="form-step-view" id="view-step-admin">
+          <div class="form-instruction-text">
+            Sign in to IKEA Admin Portal (Demo Prototype)
+          </div>
+
+          <div style="background: #e6f0fa; border-left: 4px solid #0058a3; padding: 12px 16px; border-radius: 6px; font-size: 13px; color: #0058a3; font-weight: 600; margin-bottom: 24px;">
+            Demo credentials: admin / admin
+          </div>
+
+          <form onsubmit="handleAdminSubmit(event)">
+            <div class="form-field-group">
+              <label class="form-label" for="admin-id-input">Admin ID</label>
+              <input
+                type="text"
+                id="admin-id-input"
+                class="form-input-text"
+                placeholder="admin"
+                required
+              />
+            </div>
+
+            <div class="form-field-group">
+              <label class="form-label" for="admin-password-input">Password</label>
+              <input
+                type="password"
+                id="admin-password-input"
+                class="form-input-text"
+                placeholder="••••••••"
+                required
+              />
+              <div class="form-error-msg" id="admin-error-msg">Invalid Admin ID or Password. Demo credentials: admin / admin</div>
+            </div>
+
+            <button type="submit" class="btn-black-pill" style="background:#0058A3;">
+              Log in as Admin
+            </button>
+          </form>
+
+          <button class="form-link-action" onclick="switchToStep1()">
+            &larr; Back to Member Login
+          </button>
+        </div>
+
+        <!-- VIEW 6: AUTH SUCCESS REDIRECT -->
+        <div class="form-step-view" id="view-step-success">
+          <div class="auth-success-box">
+            <div class="success-checkmark-circle">✓</div>
+            <h2 style="font-size:24px;font-weight:800;margin-bottom:8px;" id="success-user-title">Welcome to IKEA!</h2>
+            <p style="font-size:14px;color:#666;margin-bottom:24px;" id="success-user-sub">You are signed in to your IKEA Family profile.</p>
+            <div style="background:#f5f5f5;border-radius:12px;padding:16px;font-size:13px;margin-bottom:24px;text-align:left;">
+              <div style="font-weight:700;color:#0058A3;margin-bottom:4px;">✓ IKEA Family Member Benefits Active</div>
+              <div style="color:#555;">• Special member discount applied on your shopping bag</div>
+              <div style="color:#555;">• Collecting reward points on delivery</div>
+            </div>
+            <button class="btn-black-pill" onclick="executePostAuthRedirect()">
+              Continue to Shopping Bag &rarr;
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    let currentAuthMode = 'login';
+    let enteredIdentifier = '';
+    let countdownInterval = null;
+    let timerSeconds = 178;
+
+    // Get URL redirect parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const redirectTarget = urlParams.get('redirect') || '/shopping-bag.html';
+
+    function setView(viewId, heroTitleHtml) {
+      document.querySelectorAll('.form-step-view').forEach(v => v.classList.remove('active'));
+      const targetView = document.getElementById(viewId);
+      if (targetView) targetView.classList.add('active');
+
+      if (heroTitleHtml) {
+        document.getElementById('panel-hero-title-text').innerHTML = heroTitleHtml;
+      }
+    }
+
+    function handleGoBack() {
+      if (document.getElementById('view-step-admin').classList.contains('active') || document.getElementById('view-step-otp').classList.contains('active')) {
+        switchToStep1();
+      } else if (document.getElementById('view-step-password').classList.contains('active') || document.getElementById('view-step-register').classList.contains('active')) {
+        switchToStep1();
+      } else {
+        window.location.href = redirectTarget;
+      }
+    }
+
+    function switchToStep1() {
+      clearInterval(countdownInterval);
+      setView('view-step-identifier', '<span class="hero-highlight">Login</span> to your IKEA account.');
+      document.getElementById('auth-identifier-input').focus();
+    }
+
+    function switchToPasswordView() {
+      setView('view-step-password', '<span class="hero-highlight">Sign in</span> with password.');
+      document.getElementById('pwd-email-input').value = document.getElementById('auth-identifier-input').value;
+      document.getElementById('pwd-password-input').focus();
+    }
+
+    function switchToAdminView() {
+      clearInterval(countdownInterval);
+      setView('view-step-admin', '<span class="hero-highlight">Admin</span> Login');
+      const adminIdInput = document.getElementById('admin-id-input');
+      if (adminIdInput) adminIdInput.focus();
+    }
+
+    function handleAdminSubmit(e) {
+      e.preventDefault();
+      const adminId = document.getElementById('admin-id-input').value.trim();
+      const password = document.getElementById('admin-password-input').value.trim();
+      const err = document.getElementById('admin-error-msg');
+
+      if (adminId === 'admin' && password === 'admin') {
+        if (err) err.style.display = 'none';
+
+        const adminProfile = {
+          id: 'admin',
+          email: 'admin@ikea.com',
+          name: 'IKEA Administrator',
+          role: 'Administrator',
+          isAdmin: true,
+          loggedInAt: new Date().toISOString()
+        };
+
+        localStorage.setItem('ikea_admin_logged_in', 'true');
+        localStorage.setItem('ikea_user', JSON.stringify(adminProfile));
+        localStorage.setItem('ikea_user_name', 'Administrator');
+
+        document.getElementById('success-user-title').textContent = 'Hej, Administrator!';
+        document.getElementById('success-user-sub').textContent = 'Admin credentials verified. Redirecting to /admin...';
+
+        setView('view-step-success', '<span class="hero-highlight">Admin</span> Verified');
+
+        setTimeout(() => {
+          window.location.href = '/admin';
+        }, 1000);
+      } else {
+        if (err) err.style.display = 'block';
+      }
+    }
+
+    function openRegistration(type) {
+      const isCompany = type === 'company';
+      document.getElementById('register-type-title').textContent = isCompany ? 'IKEA for Business' : 'IKEA Family';
+      const defaultEmail = document.getElementById('auth-identifier-input').value;
+      if (defaultEmail.includes('@')) {
+        document.getElementById('reg-email').value = defaultEmail;
+      }
+      setView('view-step-register', '<span class="hero-highlight">Join</span> ' + (isCompany ? 'IKEA for Business.' : 'IKEA Family.'));
+    }
+
+    // STEP 1: SUBMIT EMAIL / PHONE
+    function handleIdentifierSubmit(e) {
+      e.preventDefault();
+      const input = document.getElementById('auth-identifier-input').value.trim();
+      const err = document.getElementById('identifier-error-msg');
+
+      if (!input || input.length < 3) {
+        err.style.display = 'block';
+        return;
+      }
+      err.style.display = 'none';
+      enteredIdentifier = input;
+
+      // Update destination in Step 2
+      document.getElementById('otp-destination-display').textContent = input;
+
+      // Show Step 2 (Enter Code - Screenshot 2)
+      setView('view-step-otp', '<span class="hero-highlight">Enter</span> code');
+
+      // Pre-fill realistic demo OTP code
+      const otpInput = document.getElementById('otp-code-input');
+      otpInput.value = '582910';
+      otpInput.focus();
+
+      startOtpTimer();
+    }
+
+    function startOtpTimer() {
+      clearInterval(countdownInterval);
+      timerSeconds = 178;
+      const el = document.getElementById('otp-timer-seconds');
+      el.textContent = timerSeconds;
+
+      countdownInterval = setInterval(() => {
+        timerSeconds--;
+        if (timerSeconds <= 0) {
+          clearInterval(countdownInterval);
+          document.getElementById('otp-countdown-text').innerHTML = '<a href="javascript:void(0)" onclick="resendOtpCode()" style="color:#0058A3;font-weight:700;text-decoration:underline;">Send code again</a>';
+        } else {
+          el.textContent = timerSeconds;
+        }
+      }, 1000);
+    }
+
+    function resendOtpCode() {
+      alert(`A fresh 6-digit login code has been sent to ${enteredIdentifier}`);
+      startOtpTimer();
+    }
+
+    // STEP 2: SUBMIT OTP
+    function handleOtpSubmit(e) {
+      e.preventDefault();
+      const code = document.getElementById('otp-code-input').value.trim();
+      const err = document.getElementById('otp-error-msg');
+
+      if (!code || code.length < 4) {
+        err.style.display = 'block';
+        return;
+      }
+      err.style.display = 'none';
+
+      // Perform user session persistence
+      const userName = enteredIdentifier.split('@')[0] || 'IKEA Member';
+      const cleanName = userName.charAt(0).toUpperCase() + userName.slice(1);
+      
+      const userProfile = {
+        email: enteredIdentifier.includes('@') ? enteredIdentifier : `${enteredIdentifier}@ikea.member`,
+        name: cleanName,
+        phone: enteredIdentifier.includes('@') ? '+91 98765 43210' : enteredIdentifier,
+        role: 'IKEA Family Member',
+        isFamily: true,
+        points: 450,
+        store: 'Navi Mumbai',
+        loggedInAt: new Date().toISOString()
+      };
+
+      localStorage.setItem('ikea_user', JSON.stringify(userProfile));
+      localStorage.setItem('ikea_user_name', cleanName);
+      localStorage.setItem('ikea_is_family', 'true');
+
+      // Sync with backend API in background if online
+      try {
+        fetch('http://localhost:8000/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: userProfile.email,
+            password: 'IkeaUser@123'
+          })
+        }).catch(() => {});
+      } catch (e) {}
+
+      // Show Success View
+      document.getElementById('success-user-title').textContent = `Hej, ${cleanName}!`;
+      document.getElementById('success-user-sub').textContent = `You are logged in as an IKEA Family member (${userProfile.email}).`;
+      
+      setView('view-step-success', '<span class="hero-highlight">Hej,</span> ' + cleanName + '!');
+
+      setTimeout(executePostAuthRedirect, 1800);
+    }
+
+    // STEP 3: SUBMIT PASSWORD
+    function handlePasswordSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('pwd-email-input').value.trim();
+      const cleanName = (email.split('@')[0] || 'IKEA Member');
+
+      const userProfile = {
+        email: email,
+        name: cleanName.charAt(0).toUpperCase() + cleanName.slice(1),
+        role: 'IKEA Family Member',
+        isFamily: true,
+        points: 300,
+        loggedInAt: new Date().toISOString()
+      };
+
+      localStorage.setItem('ikea_user', JSON.stringify(userProfile));
+      localStorage.setItem('ikea_user_name', userProfile.name);
+      localStorage.setItem('ikea_is_family', 'true');
+
+      document.getElementById('success-user-title').textContent = `Hej, ${userProfile.name}!`;
+      setView('view-step-success', '<span class="hero-highlight">Welcome</span> back!');
+      setTimeout(executePostAuthRedirect, 1500);
+    }
+
+    // STEP 4: SUBMIT REGISTRATION
+    function handleRegisterSubmit(e) {
+      e.preventDefault();
+      const fname = document.getElementById('reg-fname').value.trim();
+      const lname = document.getElementById('reg-lname').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const phone = document.getElementById('reg-phone').value.trim();
+      const store = document.getElementById('reg-store').value;
+
+      const userProfile = {
+        email: email,
+        name: `${fname} ${lname}`,
+        phone: phone,
+        store: store,
+        role: 'IKEA Family Member',
+        isFamily: true,
+        points: 500, // Sign up bonus
+        registeredAt: new Date().toISOString()
+      };
+
+      localStorage.setItem('ikea_user', JSON.stringify(userProfile));
+      localStorage.setItem('ikea_user_name', fname);
+      localStorage.setItem('ikea_is_family', 'true');
+
+      document.getElementById('success-user-title').textContent = `Welcome to IKEA Family, ${fname}!`;
+      document.getElementById('success-user-sub').textContent = `Your member account is active with 500 bonus reward points!`;
+
+      setView('view-step-success', '<span class="hero-highlight">Welcome,</span> ' + fname + '!');
+      setTimeout(executePostAuthRedirect, 2000);
+    }
+
+    function executePostAuthRedirect() {
+      window.location.href = redirectTarget;
+    }
+
+    // Auto-fill from query param or localStorage
+    window.addEventListener('DOMContentLoaded', () => {
+      const emailQuery = urlParams.get('email');
+      if (emailQuery) {
+        document.getElementById('auth-identifier-input').value = emailQuery;
+      }
+    });
+  </script>
+
+</body>
+
+</html>

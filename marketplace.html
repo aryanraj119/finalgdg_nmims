@@ -1,0 +1,2189 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <link rel="icon" type="image/png" href="/assets/ikea-logo.png" />
+  <title>Bookcases & Shelving Units — Marketplace & Circular Hub | IKEA India</title>
+  <script src="/ecommerce-api.js?v=3.2.0"></script>
+  <script src="/ecommerce-ui.js?v=3.2.0"></script>
+
+  <style>
+    :root {
+      --ikea-blue: #0058a3;
+      --ikea-blue-hover: #004f93;
+      --ikea-yellow: #ffdb00;
+      --ikea-yellow-hover: #f5d200;
+      --ikea-dark: #111111;
+      --ikea-gray-bg: #f5f5f5;
+      --ikea-border: #dfdfdf;
+      --ikea-border-light: #eeeeee;
+      --ikea-green: #00853d;
+      --ikea-red: #cc0008;
+      --ikea-orange: #c84e00;
+      --ikea-text-muted: #666666;
+      --ikea-text-subtle: #484848;
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: #ffffff;
+      color: var(--ikea-dark);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* 1. Top Utility Header */
+    .top-utility-bar {
+      background-color: #111111;
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 8px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .top-utility-left,
+    .top-utility-center,
+    .top-utility-right {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .utility-link {
+      color: #ffffff;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .utility-link:hover {
+      opacity: 0.8;
+      text-decoration: underline;
+    }
+
+    /* 2. Main Sticky Header */
+    .main-header {
+      background: #ffffff;
+      border-bottom: 1px solid var(--ikea-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .ikea-logo-svg {
+      display: block;
+      height: 36px;
+      width: 90px;
+      cursor: pointer;
+    }
+
+    .main-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      list-style: none;
+    }
+
+    .main-nav-links a {
+      color: var(--ikea-dark);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+      transition: color 0.2s;
+    }
+
+    .main-nav-links a:hover,
+    .main-nav-links a.active {
+      color: var(--ikea-blue);
+    }
+
+    /* Search Bar */
+    .search-wrapper {
+      flex: 1;
+      max-width: 520px;
+      position: relative;
+    }
+
+    .search-input-box {
+      width: 100%;
+      background: #f5f5f5;
+      border: 1px solid transparent;
+      border-radius: 24px;
+      padding: 10px 44px 10px 42px;
+      font-size: 14px;
+      color: #111;
+      outline: none;
+      transition: background-color 0.2s, border-color 0.2s;
+    }
+
+    .search-input-box:focus {
+      background: #ffffff;
+      border-color: #111111;
+    }
+
+    .search-icon-left {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #484848;
+      pointer-events: none;
+    }
+
+    .search-icon-right {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #484848;
+      cursor: pointer;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .header-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--ikea-dark);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 12px;
+      border-radius: 24px;
+      transition: background 0.2s;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .header-action-btn:hover {
+      background: #f5f5f5;
+    }
+
+    .bag-badge {
+      position: absolute;
+      top: 0px;
+      right: 2px;
+      background: var(--ikea-blue);
+      color: #ffffff;
+      font-size: 10px;
+      font-weight: 900;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+      border: 2px solid #ffffff;
+    }
+
+    /* 3. Breadcrumbs & Title */
+    .catalog-hero-wrapper {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 24px 24px 16px 24px;
+      width: 100%;
+    }
+
+    .breadcrumbs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--ikea-text-muted);
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .breadcrumbs a {
+      color: var(--ikea-text-muted);
+      text-decoration: none;
+    }
+
+    .breadcrumbs a:hover {
+      text-decoration: underline;
+    }
+
+    .catalog-title-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    .catalog-heading {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--ikea-dark);
+      letter-spacing: -0.5px;
+    }
+
+    .catalog-desc {
+      font-size: 13px;
+      color: var(--ikea-text-subtle);
+      max-width: 800px;
+      line-height: 1.4;
+      margin-bottom: 20px;
+    }
+
+    /* 4. Horizontal Size Filter Chips */
+    .filter-pills-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--ikea-border);
+      scrollbar-width: none;
+    }
+
+    .filter-pills-bar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .pill-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--ikea-dark);
+      white-space: nowrap;
+      margin-right: 4px;
+    }
+
+    .size-pill {
+      background: #f5f5f5;
+      border: 1px solid transparent;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ikea-dark);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .size-pill:hover {
+      background: #e9e9e9;
+    }
+
+    .size-pill.active {
+      background: var(--ikea-dark);
+      color: #ffffff;
+    }
+
+    .pill-count {
+      font-size: 11px;
+      opacity: 0.75;
+      font-weight: 500;
+    }
+
+    /* 5. Main Catalog Layout (Sidebar + Product Grid) */
+    .catalog-main-layout {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 24px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 32px;
+      align-items: flex-start;
+    }
+
+    /* Sidebar Filters Accordion */
+    .sidebar-filters {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .filter-item-count-top {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ikea-text-muted);
+      margin-bottom: 16px;
+    }
+
+    .accordion-group {
+      border-top: 1px solid var(--ikea-border);
+    }
+
+    .accordion-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ikea-dark);
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.2s;
+    }
+
+    .accordion-header:hover {
+      color: var(--ikea-blue);
+    }
+
+    .accordion-icon {
+      transition: transform 0.2s ease;
+    }
+
+    .accordion-group.open .accordion-icon {
+      transform: rotate(180deg);
+    }
+
+    .accordion-content {
+      display: none;
+      padding: 0 0 16px 0;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .accordion-group.open .accordion-content {
+      display: flex;
+    }
+
+    .filter-checkbox-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--ikea-text-subtle);
+      cursor: pointer;
+      padding: 4px 0;
+    }
+
+    .filter-checkbox-row:hover {
+      color: var(--ikea-dark);
+    }
+
+    .checkbox-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .checkbox-custom {
+      width: 18px;
+      height: 18px;
+      border: 1.5px solid #929292;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .checkbox-custom.checked {
+      background: var(--ikea-blue);
+      border-color: var(--ikea-blue);
+      color: #ffffff;
+    }
+
+    .filter-count-badge {
+      font-size: 11px;
+      color: var(--ikea-text-muted);
+    }
+
+    /* 6. Product Grid Header Controls */
+    .grid-controls-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .controls-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .active-filter-chip {
+      background: #f5f5f5;
+      border-radius: 16px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    .active-filter-chip:hover {
+      background: #e5e5e5;
+    }
+
+    .controls-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .sort-select-box {
+      border: 1px solid var(--ikea-border);
+      border-radius: 20px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      outline: none;
+      background: #ffffff;
+      cursor: pointer;
+    }
+
+    /* 7. Product Grid */
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+
+    @media (max-width: 1200px) {
+      .products-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 900px) {
+      .catalog-main-layout {
+        grid-template-columns: 1fr;
+      }
+      .sidebar-filters {
+        display: none;
+      }
+      .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .products-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Product Card */
+    .product-card {
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+      border-radius: 4px;
+      padding-bottom: 12px;
+    }
+
+    .product-card:hover .product-title {
+      color: var(--ikea-blue);
+    }
+
+    .card-top-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .compare-checkbox-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--ikea-text-muted);
+      cursor: pointer;
+    }
+
+    .wishlist-btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: #767676;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+      border-radius: 50%;
+      transition: all 0.2s;
+    }
+
+    .wishlist-btn:hover {
+      color: var(--ikea-red);
+      background: #f5f5f5;
+    }
+
+    .badge-tag-row {
+      margin-bottom: 6px;
+      min-height: 18px;
+    }
+
+    .product-badge-tag {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 2px 6px;
+      border-radius: 2px;
+      display: inline-block;
+    }
+
+    .badge-top-seller {
+      background: #e00751;
+      color: #ffffff;
+    }
+
+    .badge-new {
+      background: #111111;
+      color: #ffffff;
+    }
+
+    .badge-circular {
+      background: #0058a3;
+      color: #ffffff;
+    }
+
+    .product-image-container {
+      position: relative;
+      width: 100%;
+      padding-top: 100%; /* 1:1 Aspect Ratio */
+      background: #ffffff;
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+
+    .product-image {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transition: opacity 0.3s ease, transform 0.4s ease;
+    }
+
+    .product-image.hover-img {
+      opacity: 0;
+      object-fit: cover;
+    }
+
+    .product-card:hover .product-image.main-img {
+      opacity: 0;
+    }
+
+    .product-card:hover .product-image.hover-img {
+      opacity: 1;
+      transform: scale(1.04);
+    }
+
+    /* Product Info */
+    .product-meta-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .product-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--ikea-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.2px;
+      line-height: 1.3;
+    }
+
+    .product-desc {
+      font-size: 12px;
+      color: var(--ikea-text-subtle);
+      margin: 4px 0 8px 0;
+      line-height: 1.35;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      min-height: 32px;
+    }
+
+    /* Pricing */
+    .price-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 4px;
+      position: relative;
+    }
+
+    .price-container {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .price-highlight-badge {
+      background: var(--ikea-yellow);
+      color: #111111;
+      font-size: 18px;
+      font-weight: 900;
+      padding: 2px 6px;
+      display: inline-block;
+      letter-spacing: -0.2px;
+      margin-bottom: 2px;
+    }
+
+    .price-regular {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--ikea-dark);
+      letter-spacing: -0.2px;
+    }
+
+    .price-strikethrough {
+      font-size: 11px;
+      color: var(--ikea-text-muted);
+      text-decoration: line-through;
+      margin-top: 2px;
+    }
+
+    /* Blue Round Floating Add to Cart Button */
+    .btn-quick-cart {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: var(--ikea-blue);
+      color: #ffffff;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 88, 163, 0.3);
+      transition: background-color 0.2s, transform 0.2s;
+      flex-shrink: 0;
+    }
+
+    .btn-quick-cart:hover {
+      background-color: var(--ikea-blue-hover);
+      transform: scale(1.08);
+    }
+
+    .btn-quick-cart:active {
+      transform: scale(0.95);
+    }
+
+    .btn-quick-cart svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+
+    /* Ratings */
+    .ratings-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 6px;
+      font-size: 11px;
+      color: var(--ikea-text-subtle);
+    }
+
+    .star-icons {
+      color: var(--ikea-dark);
+      letter-spacing: 1px;
+      font-size: 11px;
+    }
+
+    /* Swatches */
+    .swatches-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+      font-size: 11px;
+      color: var(--ikea-text-muted);
+    }
+
+    .color-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
+      border: 1px solid #ccc;
+    }
+
+    /* 8. Promotional Grid Banners (from video) */
+    .promo-banner-card {
+      grid-column: span 1;
+      padding: 32px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-radius: 4px;
+      color: #ffffff;
+      min-height: 380px;
+    }
+
+    .promo-red {
+      background-color: var(--ikea-red);
+    }
+
+    .promo-orange {
+      background-color: var(--ikea-orange);
+    }
+
+    .promo-sub {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      opacity: 0.9;
+    }
+
+    .promo-main-title {
+      font-size: 28px;
+      font-weight: 900;
+      margin: 8px 0 12px 0;
+      line-height: 1.15;
+    }
+
+    .promo-body {
+      font-size: 13px;
+      line-height: 1.4;
+      opacity: 0.95;
+    }
+
+    .promo-cta-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #ffffff;
+      color: var(--ikea-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 800;
+      text-decoration: none;
+      margin-top: 24px;
+      transition: transform 0.2s;
+    }
+
+    .promo-cta-btn:hover {
+      transform: scale(1.1);
+    }
+
+    /* Services Banner (Full Width Strip) */
+    .services-strip {
+      grid-column: 1 / -1;
+      background: #f5f5f5;
+      padding: 24px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      border-radius: 4px;
+      margin: 16px 0;
+    }
+
+    .service-box {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .service-box-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--ikea-dark);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .service-box-link {
+      font-size: 12px;
+      color: var(--ikea-dark);
+      font-weight: 700;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .service-terms {
+      font-size: 11px;
+      color: var(--ikea-text-muted);
+      margin-top: 4px;
+    }
+
+    /* 9. Everyday Essentials Bottom Section (from video at 00:40) */
+    .essentials-section {
+      max-width: 1440px;
+      margin: 40px auto 0 auto;
+      padding: 24px;
+      width: 100%;
+      border-top: 1px solid var(--ikea-border);
+    }
+
+    .essentials-heading {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 20px;
+    }
+
+    .essentials-row {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 1024px) {
+      .essentials-row {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .essentials-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .essential-item-card {
+      background: #ffffff;
+      padding: 12px;
+      border: 1px solid var(--ikea-border-light);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .essential-item-img {
+      width: 100%;
+      height: 110px;
+      object-fit: contain;
+      margin-bottom: 8px;
+    }
+
+    .essential-item-name {
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .essential-item-desc {
+      font-size: 11px;
+      color: var(--ikea-text-muted);
+      margin-bottom: 8px;
+      line-height: 1.25;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .essential-price-action {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .essential-item-price {
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .btn-add-essential {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #f5f5f5;
+      border: none;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .btn-add-essential:hover {
+      background: var(--ikea-blue);
+      color: #ffffff;
+    }
+
+    /* 10. Authentic IKEA Footer */
+    .ikea-footer {
+      background: #f5f5f5;
+      border-top: 1px solid var(--ikea-border);
+      margin-top: 60px;
+      padding: 48px 24px 24px 24px;
+    }
+
+    .footer-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr;
+      gap: 32px;
+    }
+
+    @media (max-width: 900px) {
+      .footer-inner {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .footer-inner {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .footer-col-title {
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-links a {
+      color: var(--ikea-text-subtle);
+      text-decoration: none;
+      font-size: 12px;
+    }
+
+    .footer-links a:hover {
+      text-decoration: underline;
+    }
+
+    .footer-join-btn {
+      background: #111111;
+      color: #ffffff;
+      padding: 10px 20px;
+      border-radius: 24px;
+      font-size: 12px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      margin-top: 12px;
+      display: inline-block;
+    }
+
+    .footer-bottom-bar {
+      max-width: 1440px;
+      margin: 40px auto 0 auto;
+      padding-top: 24px;
+      border-top: 1px solid var(--ikea-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--ikea-text-muted);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    /* 11. Official Black Toast (matching video top-right) */
+    .ikea-toast-overlay {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 100000;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      pointer-events: none;
+    }
+
+    .ikea-official-toast {
+      pointer-events: auto;
+      background: #111111;
+      color: #ffffff;
+      padding: 16px 20px;
+      border-radius: 8px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      min-width: 320px;
+      max-width: 420px;
+      animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes slideInRight {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .toast-content-title {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .toast-content-sub {
+      font-size: 11px;
+      color: #aaaaaa;
+      line-height: 1.3;
+    }
+
+    .toast-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+
+    .toast-view-btn {
+      background: #ffffff;
+      color: #111111;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .toast-close-btn {
+      background: transparent;
+      border: none;
+      color: #ffffff;
+      font-size: 16px;
+      cursor: pointer;
+      padding: 2px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- 1. Top Utility Header (Matching Video) -->
+  <div class="top-utility-bar">
+    <div class="top-utility-left">
+      <span class="utility-link" style="cursor:default;">
+        <span style="font-weight:700;">IN</span> | English
+      </span>
+      <a href="tel:18004194532" class="utility-link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+        </svg>
+        <span>1800 419 4532 for Shopping & Design assistance</span>
+      </a>
+    </div>
+    <div class="top-utility-right">
+      <span class="utility-link" onclick="promptPostalCode()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+          <circle cx="12" cy="10" r="3"></circle>
+        </svg>
+        <span id="top-pincode-display">Enter postal code</span>
+      </span>
+      <span class="utility-link" onclick="alert('Store selector: IKEA Navi Mumbai, IKEA Hyderabad, IKEA Bengaluru, IKEA Delhi-NCR.')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+        <span>Select store</span>
+      </span>
+    </div>
+  </div>
+
+  <!-- 2. Sticky Main Header (Matching Video) -->
+  <header class="main-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <!-- Official IKEA Logo -->
+        <a href="/" style="display:flex;align-items:center;text-decoration:none;">
+          <img src="/assets/image.png" alt="IKEA" class="ikea-logo-svg" />
+        </a>
+
+        <nav>
+          <ul class="main-nav-links">
+            <li><a href="/marketplace" class="active">Products</a></li>
+            <li><a href="/planner">Rooms & 3D</a></li>
+            <li><a href="/marketplace">Offers</a></li>
+            <li><a href="/intro">Inspiration</a></li>
+            <li><a href="/secondhand">Circular Hub</a></li>
+          </ul>
+        </nav>
+      </div>
+
+      <!-- Search Box -->
+      <div class="search-wrapper">
+        <svg class="search-icon-left" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="main-search-input" class="search-input-box" placeholder="What are you looking for?" onkeyup="handleSearch(this.value)" />
+        <svg class="search-icon-right" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" onclick="alert('Visual search scanner activated!')">
+          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+          <circle cx="12" cy="13" r="4"></circle>
+        </svg>
+      </div>
+
+      <!-- Header Action Icons -->
+      <div class="header-right">
+        <a href="/login.html?redirect=/marketplace" class="header-action-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          <span id="user-display-name">Hey! Log in</span>
+        </a>
+
+        <a href="/secondhand" class="header-action-btn" title="Wishlist">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
+        </a>
+
+        <a href="/shopping-bag.html" class="header-action-btn" title="Shopping Bag">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+          </svg>
+          <span class="bag-badge" id="header-bag-count">0</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 3. Catalog Hero & Width Filter Bar (Matching Video 00:00) -->
+  <div class="catalog-hero-wrapper">
+    <div class="breadcrumbs">
+      <a href="/">Home</a> <span>/</span>
+      <a href="/marketplace">Products</a> <span>/</span>
+      <a href="/marketplace">Storage & organisation</a> <span>/</span>
+      <span>Bookcases & shelving units</span>
+    </div>
+
+    <div class="catalog-title-row">
+      <h1 class="catalog-heading">Bookcases & shelving units</h1>
+    </div>
+    <p class="catalog-desc">
+      Keep clutter at bay with our wide range of bookcases & shelving units. Explore modular storage, pre-loved Scandinavian circular designs, and heavy-duty organizers tailored to your living space.
+    </p>
+
+    <!-- Horizontal Size Pills -->
+    <div class="filter-pills-bar">
+      <span class="pill-label">Size (Width)</span>
+      <button class="size-pill active" onclick="filterBySize(this, 'all')">
+        All sizes <span class="pill-count">(311)</span>
+      </button>
+      <button class="size-pill" onclick="filterBySize(this, '0-39')">
+        0 - 39 cm <span class="pill-count">(42)</span>
+      </button>
+      <button class="size-pill" onclick="filterBySize(this, '40-59')">
+        40 - 59 cm <span class="pill-count">(33)</span>
+      </button>
+      <button class="size-pill" onclick="filterBySize(this, '60-79')">
+        60 - 79 cm <span class="pill-count">(12)</span>
+      </button>
+      <button class="size-pill" onclick="filterBySize(this, '80-99')">
+        80 - 99 cm <span class="pill-count">(140)</span>
+      </button>
+      <button class="size-pill" onclick="filterBySize(this, '100+')">
+        100+ cm <span class="pill-count">(150)</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 4. Main Catalog Section (Sidebar + Product Grid) -->
+  <main class="catalog-main-layout">
+
+    <!-- Left-Hand Collapsible Filters Accordion (Matching Video) -->
+    <aside class="sidebar-filters">
+      <div class="filter-item-count-top" id="sidebar-item-count">311 items</div>
+
+      <!-- Sort Accordion -->
+      <div class="accordion-group open">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>Sort</span>
+          <svg class="accordion-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+        <div class="accordion-content">
+          <label class="filter-checkbox-row">
+            <div class="checkbox-left">
+              <input type="radio" name="sort-radio" checked onchange="handleSortChange('best')" />
+              <span>Best match</span>
+            </div>
+          </label>
+          <label class="filter-checkbox-row">
+            <div class="checkbox-left">
+              <input type="radio" name="sort-radio" onchange="handleSortChange('price-low')" />
+              <span>Price: low to high</span>
+            </div>
+          </label>
+          <label class="filter-checkbox-row">
+            <div class="checkbox-left">
+              <input type="radio" name="sort-radio" onchange="handleSortChange('price-high')" />
+              <span>Price: high to low</span>
+            </div>
+          </label>
+          <label class="filter-checkbox-row">
+            <div class="checkbox-left">
+              <input type="radio" name="sort-radio" onchange="handleSortChange('rating')" />
+              <span>Customer rating</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Category Accordion -->
+      <div class="accordion-group open">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>Category</span>
+          <svg class="accordion-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+        <div class="accordion-content">
+          <label class="filter-checkbox-row">
+            <div class="checkbox-left">
+              <span class="checkbox-custom checked" onclick="toggleCheckbox(this)">✓</span>
+              <span>Bookcases</span>
+            </div>
+            <span class="filter-count-badge">145</span>
+          </label>
+          <label class="filter-checkbox-row">
+            <div class="checkbox-left">
+              <span class="checkbox-custom checked" onclick="toggleCheckbox(this)">✓</span>
+              <span>Shelving units</span>
+            </div>
+            <span class="filter-count-badge">112</span>
+          </label>
+          <label class="filter-checkbox-row">
+            <div class="checkbox-left">
+              <span class="checkbox-custom" onclick="toggleCheckbox(this)"></span>
+              <span>Wall shelves</span>
+            </div>
+            <span class="filter-count-badge">38</span>
+          </label>
+          <label class="filter-checkbox-row">
+            <div class="checkbox-left">
+              <span class="checkbox-custom" onclick="toggleCheckbox(this)"></span>
+              <span>Display cabinets</span>
+            </div>
+            <span class="filter-count-badge">16</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Material Accordion -->
+      <div class="accordion-group">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>Material</span>
+          <svg class="accordion-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+        <div class="accordion-content">
+          <label class="filter-checkbox-row">
+            <div class="checkbox-left">
+              <span class="checkbox-custom" onclick="toggleCheckbox(this)"></span>
+              <span>Particleboard & foil</span>
+            </div>
+            <span class="filter-count-badge">180</span>
+          </label>
+          <label class="filter-checkbox-row">
+            <div class="checkbox-left">
+              <span class="checkbox-custom" onclick="toggleCheckbox(this)"></span>
+              <span>Steel & powder coating</span>
+            </div>
+            <span class="filter-count-badge">85</span>
+          </label>
+          <label class="filter-checkbox-row">
+            <div class="checkbox-left">
+              <span class="checkbox-custom" onclick="toggleCheckbox(this)"></span>
+              <span>Solid pine / oak</span>
+            </div>
+            <span class="filter-count-badge">46</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Price Accordion -->
+      <div class="accordion-group">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>Price</span>
+          <svg class="accordion-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+        <div class="accordion-content">
+          <label class="filter-checkbox-row">
+            <div class="checkbox-left">
+              <span class="checkbox-custom" onclick="toggleCheckbox(this)"></span>
+              <span>Under ₹2,500</span>
+            </div>
+            <span class="filter-count-badge">45</span>
+          </label>
+          <label class="filter-checkbox-row">
+            <div class="checkbox-left">
+              <span class="checkbox-custom" onclick="toggleCheckbox(this)"></span>
+              <span>₹2,500 - ₹7,500</span>
+            </div>
+            <span class="filter-count-badge">134</span>
+          </label>
+          <label class="filter-checkbox-row">
+            <div class="checkbox-left">
+              <span class="checkbox-custom" onclick="toggleCheckbox(this)"></span>
+              <span>₹7,500 - ₹20,000</span>
+            </div>
+            <span class="filter-count-badge">92</span>
+          </label>
+          <label class="filter-checkbox-row">
+            <div class="checkbox-left">
+              <span class="checkbox-custom" onclick="toggleCheckbox(this)"></span>
+              <span>₹20,000+</span>
+            </div>
+            <span class="filter-count-badge">40</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Quick Checkbox Toggles (from Video) -->
+      <div style="margin-top:16px;display:flex;flex-direction:column;gap:12px;border-top:1px solid var(--ikea-border);padding-top:16px;">
+        <label class="filter-checkbox-row">
+          <div class="checkbox-left">
+            <span class="checkbox-custom" id="chk-offers" onclick="toggleQuickFilter(this, 'offers')"></span>
+            <span style="font-weight:700;color:var(--ikea-dark);">Price offers</span>
+          </div>
+          <span class="filter-count-badge">112</span>
+        </label>
+
+        <label class="filter-checkbox-row">
+          <div class="checkbox-left">
+            <span class="checkbox-custom checked" id="chk-topseller" onclick="toggleQuickFilter(this, 'topseller')">✓</span>
+            <span style="font-weight:700;color:var(--ikea-dark);">Top seller</span>
+          </div>
+          <span class="filter-count-badge">54</span>
+        </label>
+
+        <label class="filter-checkbox-row">
+          <div class="checkbox-left">
+            <span class="checkbox-custom" id="chk-business" onclick="toggleQuickFilter(this, 'business')"></span>
+            <span style="font-weight:700;color:var(--ikea-dark);">Suitable for business</span>
+          </div>
+          <span class="filter-count-badge">15</span>
+        </label>
+
+        <label class="filter-checkbox-row">
+          <div class="checkbox-left">
+            <span class="checkbox-custom" id="chk-new" onclick="toggleQuickFilter(this, 'new')"></span>
+            <span style="font-weight:700;color:var(--ikea-dark);">New products</span>
+          </div>
+          <span class="filter-count-badge">7</span>
+        </label>
+      </div>
+
+    </aside>
+
+    <!-- Right-Hand Product Grid Area -->
+    <section>
+      <!-- Grid Controls Bar -->
+      <div class="grid-controls-bar">
+        <div class="controls-left">
+          <span class="active-filter-chip" onclick="clearAllFilters()">
+            <span>Top sellers & Verified</span>
+            <span>✕</span>
+          </span>
+          <span class="active-filter-chip" onclick="alert('Showing Scandinavian pre-loved & new inventory')">
+            <span>In stock online</span>
+          </span>
+        </div>
+
+        <div class="controls-right">
+          <select class="sort-select-box" onchange="handleSortChange(this.value)">
+            <option value="best">Sort by: Best match</option>
+            <option value="price-low">Price: low to high</option>
+            <option value="price-high">Price: high to low</option>
+            <option value="rating">Customer rating</option>
+            <option value="newest">Newest items</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- 4-Column Product Grid with In-Grid Promo Banners -->
+      <div class="products-grid" id="main-products-grid">
+        <!-- Products populated dynamically by JS -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 5. Everyday Essentials Bottom Carousel (from video at 00:40) -->
+  <section class="essentials-section">
+    <h2 class="essentials-heading">Everyday essentials for you</h2>
+    <div class="essentials-row" id="essentials-container">
+      <!-- Injected by JavaScript -->
+    </div>
+  </section>
+
+  <!-- 6. Official IKEA Footer (from video) -->
+  <footer class="ikea-footer">
+    <div class="footer-inner">
+      <div>
+        <h3 class="footer-col-title">Join IKEA Family</h3>
+        <p style="font-size:12px;color:var(--ikea-text-subtle);line-height:1.4;">
+          Enjoy member-only discounts & offers, early access to sales, delicious food offers and even more every time you shop.
+        </p>
+        <button class="footer-join-btn" onclick="window.location.href='/login.html'">Join now</button>
+      </div>
+      <div>
+        <h3 class="footer-col-title">IKEA Family</h3>
+        <ul class="footer-links">
+          <li><a href="/login.html">Log in</a></li>
+          <li><a href="/login.html">Join IKEA Family</a></li>
+          <li><a href="/marketplace">Member offers</a></li>
+          <li><a href="/planner">Workshops & Events</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer-col-title">Services</h3>
+        <ul class="footer-links">
+          <li><a href="#services">Delivery Service</a></li>
+          <li><a href="#services">Click & collect</a></li>
+          <li><a href="#services">Personal shopper</a></li>
+          <li><a href="/planner">Online planning tool</a></li>
+          <li><a href="#services">Assembly Service</a></li>
+          <li><a href="#services">Recycle Program</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer-col-title">Help</h3>
+        <ul class="footer-links">
+          <li><a href="/shopping-bag.html">How to shop</a></li>
+          <li><a href="#services">Return policy</a></li>
+          <li><a href="#services">Price and print tags</a></li>
+          <li><a href="#services">Contact us</a></li>
+          <li><a href="#services">FAQ's</a></li>
+          <li><a href="#services">Gift Card</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer-col-title">About IKEA</h3>
+        <ul class="footer-links">
+          <li><a href="/intro">This is IKEA</a></li>
+          <li><a href="/intro">Careers at IKEA</a></li>
+          <li><a href="/intro">CSR Policy</a></li>
+          <li><a href="/intro">Newsroom</a></li>
+          <li><a href="/secondhand">Sustainability & Circular Hub</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom-bar">
+      <span>© Inter IKEA Systems B.V. 1999-2026. All rights reserved.</span>
+      <div style="display:flex;gap:16px;">
+        <a href="#" style="color:inherit;text-decoration:none;">Privacy policy</a>
+        <a href="#" style="color:inherit;text-decoration:none;">Cookie policy</a>
+        <a href="#" style="color:inherit;text-decoration:none;">Cookie settings</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 7. Dynamic Toast Notification Overlay -->
+  <div class="ikea-toast-overlay" id="ikea-toast-container"></div>
+
+  <!-- Bottom Navigation Buttons -->
+  <div style="position:fixed;bottom:24px;left:24px;z-index:99999;display:flex;gap:12px;">
+    <a href="/planner" style="display:inline-flex;align-items:center;gap:8px;background:#ffdb00;color:#111111;padding:12px 18px;border-radius:30px;font-size:13px;font-weight:800;text-decoration:none;box-shadow:0 6px 20px rgba(0,0,0,0.2);transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+      <span>✨ 3D Room Planner</span>
+    </a>
+    <a href="/shopping-bag.html" style="display:inline-flex;align-items:center;gap:8px;background:#0058a3;color:#ffffff;padding:12px 18px;border-radius:30px;font-size:13px;font-weight:800;text-decoration:none;box-shadow:0 6px 20px rgba(0,88,163,0.3);transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      <span>Shopping Bag</span>
+    </a>
+  </div>
+
+  <script>
+    // Curated High-Fidelity Catalog Data matching the Video exactly
+    const CATALOG_PRODUCTS = [
+      {
+        id: "prod-baggebo-white",
+        name: "BAGGEBO",
+        desc: "Shelving unit, metal/white, 60x25x116 cm (23 5/8x9 7/8x45 5/8 \")",
+        price: 1990,
+        originalPrice: 2490,
+        isHighlightPrice: true,
+        badge: "Top seller",
+        badgeType: "badge-top-seller",
+        rating: "4.8",
+        reviews: 428,
+        width: 60,
+        imageMain: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=800&q=80",
+        imageHover: "https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&w=800&q=80",
+        swatches: ["#ffffff", "#222222"]
+      },
+      {
+        id: "prod-billy-oxberg-white",
+        name: "BILLY / OXBERG",
+        desc: "Bookcase with glass/panel doors, white, 80x30x202 cm (31 1/2x11 3/4x79 1/2 \")",
+        price: 15990,
+        originalPrice: null,
+        isHighlightPrice: false,
+        badge: "Top seller",
+        badgeType: "badge-top-seller",
+        rating: "4.9",
+        reviews: 1590,
+        width: 80,
+        imageMain: "https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&w=800&q=80",
+        imageHover: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&w=800&q=80",
+        swatches: ["#ffffff", "#3b281f", "#e6cfb3"]
+      },
+      {
+        id: "prod-billy-oxberg-walnut",
+        name: "BILLY / OXBERG",
+        desc: "Bookcase with glass doors, brown walnut effect/clear glass, 80x30x202 cm (31 1/2x11 3/4x79 1/2 \")",
+        price: 17990,
+        originalPrice: null,
+        isHighlightPrice: false,
+        badge: "Top seller",
+        badgeType: "badge-top-seller",
+        rating: "4.9",
+        reviews: 1428,
+        width: 80,
+        imageMain: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&w=800&q=80",
+        imageHover: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=800&q=80",
+        swatches: ["#3b281f", "#ffffff", "#2c2c2c"]
+      },
+      {
+        id: "prod-billy-standard-white",
+        name: "BILLY",
+        desc: "Bookcase, white, 40x28x106 cm (15 3/4x11x41 3/4 \")",
+        price: 2990,
+        originalPrice: 3490,
+        isHighlightPrice: true,
+        badge: "Top seller",
+        badgeType: "badge-top-seller",
+        rating: "4.7",
+        reviews: 2190,
+        width: 40,
+        imageMain: "https://images.unsplash.com/photo-1580481077198-98e3c4a86ce9?auto=format&fit=crop&w=800&q=80",
+        imageHover: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=800&q=80",
+        swatches: ["#ffffff", "#1e1e1e"]
+      },
+      {
+        id: "prod-lerberg-anthracite",
+        name: "LERBERG",
+        desc: "Shelving unit, anthracite dark grey, 60x35x148 cm",
+        price: 2990,
+        originalPrice: 3500,
+        isHighlightPrice: false,
+        badge: "Top seller",
+        badgeType: "badge-top-seller",
+        rating: "4.8",
+        reviews: 842,
+        width: 60,
+        imageMain: "https://images.unsplash.com/photo-1503602642458-232111445657?auto=format&fit=crop&w=800&q=80",
+        imageHover: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=800&q=80",
+        swatches: ["#2b2b2b", "#ffffff"]
+      },
+      {
+        id: "prod-hyllis-galvanised",
+        name: "HYLLIS",
+        desc: "Shelving unit, in/outdoor, galvanised metal, 60x27x140 cm",
+        price: 1190,
+        originalPrice: 1590,
+        isHighlightPrice: true,
+        badge: "Top seller",
+        badgeType: "badge-top-seller",
+        rating: "4.6",
+        reviews: 5120,
+        width: 60,
+        imageMain: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=800&q=80",
+        imageHover: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=800&q=80",
+        swatches: ["#a8a8a8"]
+      },
+      {
+        id: "prod-billy-tall-white",
+        name: "BILLY",
+        desc: "Bookcase, white, 80x28x202 cm (31 1/2x11x79 1/2 \")",
+        price: 8990,
+        originalPrice: 9990,
+        isHighlightPrice: false,
+        badge: "Top seller",
+        badgeType: "badge-top-seller",
+        rating: "4.9",
+        reviews: 3200,
+        width: 80,
+        imageMain: "https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&w=800&q=80",
+        imageHover: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80",
+        swatches: ["#ffffff", "#2b1b17", "#d3b89d"]
+      },
+      {
+        id: "prod-jonaxel-shelving",
+        name: "JONAXEL",
+        desc: "Shelving unit, white, 50x51x104 cm",
+        price: 3990,
+        originalPrice: null,
+        isHighlightPrice: false,
+        badge: "Top seller",
+        badgeType: "badge-top-seller",
+        rating: "4.7",
+        reviews: 390,
+        width: 50,
+        imageMain: "https://images.unsplash.com/photo-1581539250439-c96689b516dd?auto=format&fit=crop&w=800&q=80",
+        imageHover: "https://images.unsplash.com/photo-1538688525198-9b88f6f53126?auto=format&fit=crop&w=800&q=80",
+        swatches: ["#ffffff"]
+      },
+      {
+        id: "prod-billy-double-glass",
+        name: "BILLY / OXBERG",
+        desc: "Bookcase with glass doors, 160x30x202 cm (63x11 3/4x79 1/2 \")",
+        price: 35980,
+        originalPrice: null,
+        isHighlightPrice: false,
+        badge: "Top seller",
+        badgeType: "badge-top-seller",
+        rating: "4.9",
+        reviews: 780,
+        width: 160,
+        imageMain: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&w=800&q=80",
+        imageHover: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=800&q=80",
+        swatches: ["#ffffff", "#3b281f", "#111111"]
+      },
+      {
+        id: "prod-brimnes-cabinet",
+        name: "BRIMNES",
+        desc: "Bookcase with doors, white, 78x95 cm (30 3/4x37 3/8 \")",
+        price: 8990,
+        originalPrice: null,
+        isHighlightPrice: false,
+        badge: "Top seller",
+        badgeType: "badge-top-seller",
+        rating: "4.8",
+        reviews: 620,
+        width: 78,
+        imageMain: "https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&w=800&q=80",
+        imageHover: "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?auto=format&fit=crop&w=800&q=80",
+        swatches: ["#ffffff", "#222222"]
+      },
+      {
+        id: "prod-kallax-4x4",
+        name: "KALLAX",
+        desc: "Shelving unit, white, 147x147 cm (57 7/8x57 7/8 \")",
+        price: 11990,
+        originalPrice: 13990,
+        isHighlightPrice: false,
+        badge: "Top seller",
+        badgeType: "badge-top-seller",
+        rating: "4.9",
+        reviews: 4890,
+        width: 147,
+        imageMain: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=800&q=80",
+        imageHover: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80",
+        swatches: ["#ffffff", "#1e1e1e", "#d8bc9d", "#7a8a99"]
+      },
+      {
+        id: "prod-kallax-2x2",
+        name: "KALLAX",
+        desc: "Shelving unit, black-brown, 77x77 cm (30 3/8x30 3/8 \")",
+        price: 4490,
+        originalPrice: 4990,
+        isHighlightPrice: false,
+        badge: "New",
+        badgeType: "badge-new",
+        rating: "4.8",
+        reviews: 2310,
+        width: 77,
+        imageMain: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=800&q=80",
+        imageHover: "https://images.unsplash.com/photo-1503602642458-232111445657?auto=format&fit=crop&w=800&q=80",
+        swatches: ["#2b1b17", "#ffffff", "#e0ceb5"]
+      }
+    ];
+
+    const EVERYDAY_ESSENTIALS = [
+      {
+        id: "ess-001",
+        name: "BEVARA",
+        desc: "Sealing clip, set of 30, assorted colours",
+        price: 49,
+        image: "https://images.unsplash.com/photo-1584992236310-6edddc08acff?auto=format&fit=crop&w=300&q=80"
+      },
+      {
+        id: "ess-002",
+        name: "PRODUKT",
+        desc: "Milk frother, black",
+        price: 99,
+        image: "https://images.unsplash.com/photo-1517256064527-09c73fc73e38?auto=format&fit=crop&w=300&q=80"
+      },
+      {
+        id: "ess-003",
+        name: "SVARTSIK",
+        desc: "Scissors, set of 3, stainless steel/grey",
+        price: 199,
+        image: "https://images.unsplash.com/photo-1590736969955-71cc94801759?auto=format&fit=crop&w=300&q=80"
+      },
+      {
+        id: "ess-004",
+        name: "SKRUVBY",
+        desc: "Squeegee, black",
+        price: 99,
+        image: "https://images.unsplash.com/photo-1584992236310-6edddc08acff?auto=format&fit=crop&w=300&q=80"
+      },
+      {
+        id: "ess-005",
+        name: "RINNIG",
+        desc: "Dishwashing brush, white",
+        price: 49,
+        image: "https://images.unsplash.com/photo-1584992236310-6edddc08acff?auto=format&fit=crop&w=300&q=80"
+      },
+      {
+        id: "ess-006",
+        name: "KORKEN",
+        desc: "Bottle with stopper, clear glass, 1 L",
+        price: 149,
+        image: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=300&q=80"
+      }
+    ];
+
+    let currentProducts = [...CATALOG_PRODUCTS];
+    let selectedSizeFilter = 'all';
+
+    function renderCatalog() {
+      const grid = document.getElementById('main-products-grid');
+      if (!grid) return;
+
+      let html = '';
+
+      // Items 0 to 3
+      currentProducts.slice(0, 4).forEach(prod => {
+        html += renderProductCardHTML(prod);
+      });
+
+      // Promotional Red Banner (from video) after first row
+      html += `
+        <div class="promo-banner-card promo-red">
+          <div>
+            <div class="promo-sub">Bookcases & shelving units</div>
+            <div class="promo-main-title">Latest offers</div>
+            <p class="promo-body">Make the most of budget-friendly deals on your favourite storage.</p>
+          </div>
+          <a href="#offers" class="promo-cta-btn">→</a>
+        </div>
+      `;
+
+      // Items 4 to 6
+      currentProducts.slice(4, 7).forEach(prod => {
+        html += renderProductCardHTML(prod);
+      });
+
+      // Services Banner Strip (Full Width across grid)
+      html += `
+        <div class="services-strip">
+          <div class="service-box">
+            <div class="service-box-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+              <span>Assembly service</span>
+            </div>
+            <a class="service-box-link" onclick="alert('Assembly starting at ₹499 for IKEA items')">Learn more</a>
+            <span class="service-terms">Terms and conditions apply</span>
+          </div>
+          <div class="service-box">
+            <div class="service-box-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+              <span>Home delivery</span>
+            </div>
+            <a class="service-box-link" onclick="alert('Next-day doorstep delivery available in your area')">Learn more</a>
+            <span class="service-terms">Terms and conditions apply</span>
+          </div>
+          <div class="service-box">
+            <div class="service-box-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+              <span>Enjoy today, pay later</span>
+            </div>
+            <a class="service-box-link" onclick="alert('No-cost EMI available on major banks')">Learn more</a>
+            <span class="service-terms">Terms and conditions apply</span>
+          </div>
+        </div>
+      `;
+
+      // Items 7 to 9
+      currentProducts.slice(7, 10).forEach(prod => {
+        html += renderProductCardHTML(prod);
+      });
+
+      // Orange Promo Banner
+      html += `
+        <div class="promo-banner-card promo-orange">
+          <div>
+            <div class="promo-sub">Bookcases & shelving units</div>
+            <div class="promo-main-title">New</div>
+            <p class="promo-body">Say hello to the latest and greatest. Explore styles, circular options, and find your new favourites.</p>
+          </div>
+          <a href="#new" class="promo-cta-btn">→</a>
+        </div>
+      `;
+
+      // Remaining items
+      currentProducts.slice(10).forEach(prod => {
+        html += renderProductCardHTML(prod);
+      });
+
+      grid.innerHTML = html;
+      document.getElementById('sidebar-item-count').textContent = `${currentProducts.length} items`;
+    }
+
+    function renderProductCardHTML(p) {
+      return `
+        <article class="product-card" id="card-${p.id}">
+          <div class="card-top-actions">
+            <label class="compare-checkbox-label" onclick="event.stopPropagation()">
+              <input type="checkbox" />
+              <span>Compare</span>
+            </label>
+            <button class="wishlist-btn" title="Save to Wishlist" onclick="toggleWishlist(event, '${p.id}', '${p.name}')">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+              </svg>
+            </button>
+          </div>
+
+          <div class="badge-tag-row">
+            ${p.badge ? `<span class="product-badge-tag ${p.badgeType || 'badge-top-seller'}">${p.badge}</span>` : ''}
+          </div>
+
+          <div class="product-image-container" onclick="window.location.href='/product.html?id=${p.id}'">
+            <img src="${p.imageMain}" alt="${p.name}" class="product-image main-img" />
+            <img src="${p.imageHover}" alt="${p.name}" class="product-image hover-img" />
+          </div>
+
+          <div class="product-meta-row" onclick="window.location.href='/product.html?id=${p.id}'" style="cursor:pointer;">
+            <h3 class="product-title">${p.name}</h3>
+          </div>
+          <p class="product-desc" onclick="window.location.href='/product.html?id=${p.id}'" style="cursor:pointer;">${p.desc}</p>
+
+          <div class="price-row">
+            <div class="price-container">
+              ${p.isHighlightPrice ? `
+                <span class="price-highlight-badge">Rs. ${p.price.toLocaleString('en-IN')}</span>
+                ${p.originalPrice ? `<span class="price-strikethrough">Rs. ${p.originalPrice.toLocaleString('en-IN')}</span>` : ''}
+              ` : `
+                <span class="price-regular">Rs. ${p.price.toLocaleString('en-IN')}</span>
+                ${p.originalPrice ? `<span class="price-strikethrough">Rs. ${p.originalPrice.toLocaleString('en-IN')}</span>` : ''}
+              `}
+            </div>
+
+            <!-- Authentic Blue Round Cart Button -->
+            <button class="btn-quick-cart" title="Add to shopping bag" onclick="handleAddToCartClick(event, '${p.id}')">
+              <svg viewBox="0 0 24 24">
+                <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
+              </svg>
+            </button>
+          </div>
+
+          <div class="ratings-row">
+            <span class="star-icons">★★★★★</span>
+            <span>(${p.reviews})</span>
+          </div>
+
+          <div class="swatches-row">
+            ${p.swatches ? p.swatches.map(color => `<span class="color-dot" style="background:${color};"></span>`).join('') : ''}
+            <span>More options</span>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderEssentials() {
+      const container = document.getElementById('essentials-container');
+      if (!container) return;
+      container.innerHTML = EVERYDAY_ESSENTIALS.map(item => `
+        <div class="essential-item-card" style="cursor:pointer;" onclick="window.location.href='/product.html?id=${item.id}'">
+          <img src="${item.image}" alt="${item.name}" class="essential-item-img" />
+          <div class="essential-item-name">${item.name}</div>
+          <div class="essential-item-desc">${item.desc}</div>
+          <div class="essential-price-action">
+            <span class="essential-item-price">Rs. ${item.price}</span>
+            <button class="btn-add-essential" title="Add to bag" onclick="handleAddToCartClick(event, '${item.id}')">+</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Add To Cart Engine with Authentic Toast & State Persistence
+    function handleAddToCartClick(event, prodId) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+
+      const found = CATALOG_PRODUCTS.find(p => p.id === prodId) || EVERYDAY_ESSENTIALS.find(e => e.id === prodId);
+      if (!found) return;
+
+      const productPayload = {
+        id: found.id,
+        name: found.name,
+        desc: found.desc,
+        price: found.price,
+        originalPrice: found.originalPrice || Math.round(found.price * 1.25),
+        image: found.imageMain || found.image || 'https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&w=800&q=80',
+        quantity: 1,
+        articleNumber: Math.floor(100 + Math.random() * 900) + '.' + Math.floor(100 + Math.random() * 900) + '.' + Math.floor(10 + Math.random() * 90),
+        hasAccessories: true
+      };
+
+      // 1. Persist to Cart Storage
+      let cart = [];
+      try {
+        const stored = localStorage.getItem('ikea_cart_items') || sessionStorage.getItem('ikea_bag_items');
+        if (stored) cart = JSON.parse(stored);
+      } catch (e) {}
+
+      const existingIndex = cart.findIndex(i => i.id === productPayload.id || i.name === productPayload.name);
+      if (existingIndex !== -1) {
+        cart[existingIndex].quantity = (cart[existingIndex].quantity || 1) + 1;
+      } else {
+        cart.push(productPayload);
+      }
+
+      localStorage.setItem('ikea_cart_items', JSON.stringify(cart));
+      sessionStorage.setItem('ikea_bag_items', JSON.stringify(cart));
+
+      // 2. Sync to Backend API
+      try {
+        fetch('http://localhost:8000/api/cart/items', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-guest-session-id': localStorage.getItem('ikea_guest_session_id') || 'guest_' + Date.now()
+          },
+          body: JSON.stringify({
+            product_id: productPayload.id,
+            quantity: 1
+          })
+        }).catch(err => console.log('Cart Sync:', err.message));
+      } catch (e) {}
+
+      // 3. Update Cart Badges
+      updateHeaderBadge();
+
+      // 4. Show Authentic Toast (Matching Video 00:12)
+      showOfficialToast(found.name);
+    }
+
+    function updateHeaderBadge() {
+      try {
+        const stored = localStorage.getItem('ikea_cart_items') || sessionStorage.getItem('ikea_bag_items');
+        const cart = stored ? JSON.parse(stored) : [];
+        const count = cart.reduce((sum, i) => sum + (i.quantity || 1), 0);
+        const badge = document.getElementById('header-bag-count');
+        if (badge) {
+          badge.textContent = count;
+          badge.style.display = 'flex';
+          badge.classList.remove('cart-badge-bounce');
+          void badge.offsetWidth;
+          badge.classList.add('cart-badge-bounce');
+        }
+      } catch (e) {}
+    }
+
+    function showOfficialToast(productName) {
+      const container = document.getElementById('ikea-toast-container');
+      if (!container) return;
+
+      const toast = document.createElement('div');
+      toast.className = 'ikea-official-toast';
+      toast.innerHTML = `
+        <div style="flex:1;">
+          <div class="toast-content-title"><strong>${productName}</strong> was added to your shopping bag.</div>
+          <div class="toast-content-sub">Keep your lists with IKEA Family for your next visit.</div>
+        </div>
+        <div class="toast-actions">
+          <a href="/shopping-bag.html" class="toast-view-btn">View</a>
+          <button class="toast-close-btn" onclick="this.closest('.ikea-official-toast').remove()">✕</button>
+        </div>
+      `;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(100%)';
+        toast.style.transition = 'all 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 5000);
+    }
+
+    function toggleAccordion(headerEl) {
+      const group = headerEl.closest('.accordion-group');
+      if (group) group.classList.toggle('open');
+    }
+
+    function toggleCheckbox(el) {
+      el.classList.toggle('checked');
+      if (el.classList.contains('checked')) {
+        el.textContent = '✓';
+      } else {
+        el.textContent = '';
+      }
+    }
+
+    function toggleQuickFilter(el, type) {
+      toggleCheckbox(el);
+      if (type === 'topseller') {
+        if (el.classList.contains('checked')) {
+          currentProducts = CATALOG_PRODUCTS.filter(p => p.badge === 'Top seller');
+        } else {
+          currentProducts = [...CATALOG_PRODUCTS];
+        }
+      } else if (type === 'offers') {
+        if (el.classList.contains('checked')) {
+          currentProducts = CATALOG_PRODUCTS.filter(p => p.isHighlightPrice);
+        } else {
+          currentProducts = [...CATALOG_PRODUCTS];
+        }
+      }
+      renderCatalog();
+    }
+
+    function filterBySize(btn, sizeKey) {
+      document.querySelectorAll('.size-pill').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedSizeFilter = sizeKey;
+
+      if (sizeKey === 'all') {
+        currentProducts = [...CATALOG_PRODUCTS];
+      } else if (sizeKey === '0-39') {
+        currentProducts = CATALOG_PRODUCTS.filter(p => p.width <= 39);
+      } else if (sizeKey === '40-59') {
+        currentProducts = CATALOG_PRODUCTS.filter(p => p.width >= 40 && p.width <= 59);
+      } else if (sizeKey === '60-79') {
+        currentProducts = CATALOG_PRODUCTS.filter(p => p.width >= 60 && p.width <= 79);
+      } else if (sizeKey === '80-99') {
+        currentProducts = CATALOG_PRODUCTS.filter(p => p.width >= 80 && p.width <= 99);
+      } else if (sizeKey === '100+') {
+        currentProducts = CATALOG_PRODUCTS.filter(p => p.width >= 100);
+      }
+      renderCatalog();
+    }
+
+    function handleSortChange(val) {
+      if (val === 'price-low') {
+        currentProducts.sort((a, b) => a.price - b.price);
+      } else if (val === 'price-high') {
+        currentProducts.sort((a, b) => b.price - a.price);
+      } else if (val === 'rating') {
+        currentProducts.sort((a, b) => b.reviews - a.reviews);
+      } else {
+        currentProducts = [...CATALOG_PRODUCTS];
+      }
+      renderCatalog();
+    }
+
+    function handleSearch(query) {
+      const q = (query || '').toLowerCase().trim();
+      if (!q) {
+        currentProducts = [...CATALOG_PRODUCTS];
+      } else {
+        currentProducts = CATALOG_PRODUCTS.filter(p => 
+          p.name.toLowerCase().includes(q) || 
+          p.desc.toLowerCase().includes(q)
+        );
+      }
+      renderCatalog();
+    }
+
+    function clearAllFilters() {
+      currentProducts = [...CATALOG_PRODUCTS];
+      document.querySelectorAll('.size-pill').forEach(b => b.classList.remove('active'));
+      document.querySelector('.size-pill')?.classList.add('active');
+      renderCatalog();
+    }
+
+    function toggleWishlist(e, id, name) {
+      e.stopPropagation();
+      alert(`"${name}" saved to your IKEA Wishlist!`);
+    }
+
+    function promptPostalCode() {
+      const code = prompt("Enter your 6-digit delivery pincode:", "400701");
+      if (code && code.trim()) {
+        document.getElementById('top-pincode-display').textContent = code.trim();
+      }
+    }
+
+    // Initialize UI
+    window.addEventListener('DOMContentLoaded', () => {
+      renderCatalog();
+      renderEssentials();
+      updateHeaderBadge();
+
+      // Check User Login State
+      try {
+        const user = JSON.parse(localStorage.getItem('ikea_user') || 'null');
+        if (user && user.full_name) {
+          const userEl = document.getElementById('user-display-name');
+          if (userEl) userEl.textContent = 'Hej, ' + user.full_name.split(' ')[0] + '!';
+        }
+      } catch (e) {}
+    });
+  </script>
+
+</body>
+
+</html>

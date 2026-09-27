@@ -1,0 +1,2349 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <link rel="icon" type="image/png" href="/assets/ikea-logo.png" />
+  <title>Shopping bag — IKEA India</title>
+  <script src="/ecommerce-api.js?v=3.0.0"></script>
+  <script src="/ecommerce-ui.js?v=3.0.0"></script>
+
+  <style>
+    :root {
+      --ikea-blue: #0058a3;
+      --ikea-blue-hover: #004f93;
+      --ikea-yellow: #ffdb00;
+      --ikea-dark: #111111;
+      --ikea-gray-bg: #f5f5f5;
+      --ikea-border: #dfdfdf;
+      --ikea-border-light: #eeeeee;
+      --ikea-green: #00853d;
+      --ikea-text-muted: #666666;
+      --ikea-text-subtle: #484848;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: #ffffff;
+      color: var(--ikea-dark);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 1. Top Utility Header */
+    .top-utility-bar {
+      background-color: #111111;
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 8px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .top-utility-left,
+    .top-utility-center,
+    .top-utility-right {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .utility-link {
+      color: #ffffff;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .utility-link:hover {
+      opacity: 0.8;
+      text-decoration: underline;
+    }
+
+    /* 2. Main Sticky Header */
+    .main-header {
+      background: #ffffff;
+      border-bottom: 1px solid var(--ikea-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-inner {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .ikea-logo-svg {
+      display: block;
+      height: 36px;
+      width: 90px;
+    }
+
+    .main-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      list-style: none;
+    }
+
+    .main-nav-links a {
+      color: var(--ikea-dark);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+      transition: color 0.2s;
+    }
+
+    .main-nav-links a:hover {
+      color: var(--ikea-blue);
+    }
+
+    /* Search Bar */
+    .search-wrapper {
+      flex: 1;
+      max-width: 480px;
+      position: relative;
+    }
+
+    .search-input-box {
+      width: 100%;
+      background: #f5f5f5;
+      border: 1px solid transparent;
+      border-radius: 24px;
+      padding: 10px 44px 10px 42px;
+      font-size: 14px;
+      color: #111;
+      outline: none;
+      transition: background-color 0.2s, border-color 0.2s;
+    }
+
+    .search-input-box:focus {
+      background: #ffffff;
+      border-color: #111111;
+    }
+
+    .search-icon-left {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #484848;
+      pointer-events: none;
+    }
+
+    .search-icon-right {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #484848;
+      cursor: pointer;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .header-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--ikea-dark);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 6px 8px;
+      border-radius: 20px;
+      transition: background 0.2s;
+    }
+
+    .header-action-btn:hover {
+      background: #f5f5f5;
+    }
+
+    .bag-icon-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .bag-badge {
+      position: absolute;
+      top: -4px;
+      right: -8px;
+      background: var(--ikea-blue);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 800;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+    }
+
+    /* Main Container */
+    .main-page-container {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 32px 24px 80px 24px;
+      flex: 1;
+      width: 100%;
+    }
+
+    .bag-grid-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+
+    @media (min-width: 1024px) {
+      .bag-grid-layout {
+        grid-template-columns: 1fr 420px;
+        align-items: start;
+      }
+    }
+
+    /* Left Column */
+    .bag-left-column {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .bag-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+
+    .bag-main-heading {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .bag-more-options-btn {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #484848;
+      padding: 6px 10px;
+      border-radius: 50%;
+      line-height: 1;
+      transition: background 0.2s;
+    }
+
+    .bag-more-options-btn:hover {
+      background: #f0f0f0;
+    }
+
+    /* Delivery Availability Banner */
+    .delivery-check-card {
+      border: 1px solid var(--ikea-border);
+      border-radius: 8px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s;
+      background: #ffffff;
+    }
+
+    .delivery-check-card:hover {
+      border-color: #111111;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .delivery-check-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #111111;
+    }
+
+    .delivery-check-chevron {
+      color: #666;
+    }
+
+    /* Bag Items List */
+    .bag-items-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .bag-item-card {
+      padding: 24px 0;
+      border-bottom: 1px solid var(--ikea-border-light);
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 24px;
+      position: relative;
+    }
+
+    @media (max-width: 600px) {
+      .bag-item-card {
+        grid-template-columns: 100px 1fr;
+        gap: 16px;
+      }
+    }
+
+    .bag-item-media {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .bag-item-img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      background-color: #f7f7f7;
+      border-radius: 6px;
+    }
+
+    .bag-item-artno {
+      margin-top: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #111111;
+      background: #f0f0f0;
+      padding: 3px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .bag-item-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .bag-item-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .bag-item-name {
+      font-size: 16px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin-bottom: 4px;
+      color: #111111;
+    }
+
+    .bag-item-desc {
+      font-size: 13px;
+      color: var(--ikea-text-subtle);
+      line-height: 1.4;
+      margin-bottom: 8px;
+      max-width: 460px;
+    }
+
+    .bag-family-discount-tag {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ikea-blue);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .bag-item-price {
+      font-size: 16px;
+      font-weight: 800;
+      color: #111111;
+      white-space: nowrap;
+      text-align: right;
+    }
+
+    .bag-complete-with {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 12px;
+      background: #f8f8f8;
+      border: 1px dashed #d0d0d0;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #333;
+      margin-top: 8px;
+      cursor: pointer;
+      width: fit-content;
+      transition: background 0.2s;
+    }
+
+    .bag-complete-with:hover {
+      background: #f0f0f0;
+    }
+
+    .complete-thumb-icons {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .complete-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #e0e0e0;
+      display: inline-block;
+    }
+
+    /* Bottom Action Row */
+    .bag-item-bottom-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 18px;
+      padding-top: 14px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .bag-item-actions-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .btn-save-later {
+      background: none;
+      border: none;
+      font-size: 13px;
+      font-weight: 600;
+      color: #111111;
+      text-decoration: underline;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .btn-save-later:hover {
+      color: var(--ikea-blue);
+    }
+
+    .btn-delete-item {
+      background: none;
+      border: none;
+      color: #484848;
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .btn-delete-item:hover {
+      background: #f0f0f0;
+      color: #e00751;
+    }
+
+    .qty-stepper-pill {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--ikea-border);
+      border-radius: 20px;
+      padding: 2px 6px;
+      background: #ffffff;
+      gap: 10px;
+    }
+
+    .qty-btn {
+      background: none;
+      border: none;
+      width: 28px;
+      height: 28px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #111111;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background 0.2s;
+    }
+
+    .qty-btn:hover {
+      background: #f0f0f0;
+    }
+
+    .qty-number {
+      font-size: 14px;
+      font-weight: 700;
+      min-width: 16px;
+      text-align: center;
+      color: #111111;
+    }
+
+    /* Everyday Essentials Carousel */
+    .essentials-section {
+      margin-top: 48px;
+      padding-top: 32px;
+      border-top: 1px solid var(--ikea-border);
+    }
+
+    .essentials-title {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 20px;
+    }
+
+    .essentials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 16px;
+    }
+
+    .essential-card {
+      border: 1px solid var(--ikea-border-light);
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      background: #ffffff;
+      transition: box-shadow 0.2s;
+    }
+
+    .essential-card:hover {
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    }
+
+    .essential-img {
+      width: 100%;
+      height: 100px;
+      object-fit: contain;
+      margin-bottom: 8px;
+    }
+
+    .essential-name {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #111;
+    }
+
+    .essential-desc {
+      font-size: 11px;
+      color: #666;
+      margin: 2px 0 6px 0;
+      line-height: 1.3;
+    }
+
+    .essential-price-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: auto;
+    }
+
+    .essential-price {
+      font-size: 13px;
+      font-weight: 800;
+      color: #111;
+    }
+
+    .essential-add-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--ikea-blue);
+      color: #ffffff;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-weight: 900;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .essential-add-btn:hover {
+      background: var(--ikea-blue-hover);
+      transform: scale(1.1);
+    }
+
+    /* Right Column: Order Summary Sidebar */
+    .bag-right-sidebar {
+      position: sticky;
+      top: 80px;
+    }
+
+    .order-summary-card {
+      background: #ffffff;
+      border: 1px solid var(--ikea-border);
+      border-radius: 12px;
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .summary-heading {
+      font-size: 20px;
+      font-weight: 800;
+      color: #111111;
+    }
+
+    .summary-products-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 15px;
+      color: #111111;
+    }
+
+    .summary-subtext-note {
+      font-size: 12px;
+      color: var(--ikea-text-muted);
+      margin-top: -8px;
+    }
+
+    .summary-divider {
+      height: 1px;
+      background: var(--ikea-border);
+      margin: 4px 0;
+    }
+
+    .summary-total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 16px;
+      font-weight: 800;
+      color: #111111;
+    }
+
+    .summary-total-price {
+      font-size: 22px;
+      font-weight: 900;
+      color: #111111;
+    }
+
+    /* IKEA Family Banner */
+    .ikea-family-promo-box {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px;
+      background: #f8fbff;
+      border: 1px solid #d0e2ff;
+      border-radius: 8px;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .family-badge-icon {
+      width: 24px;
+      height: 24px;
+      background: #0058a3;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: #ffdb00;
+      font-weight: 900;
+      font-size: 11px;
+      letter-spacing: -0.5px;
+    }
+
+    .family-promo-content {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .family-promo-title {
+      font-weight: 800;
+      color: #111111;
+    }
+
+    .family-promo-title span {
+      color: var(--ikea-blue);
+    }
+
+    .family-promo-links {
+      margin-top: 4px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .family-promo-links a {
+      color: var(--ikea-blue);
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    /* Promo Code Accordion */
+    .coupon-accordion-btn {
+      background: none;
+      border: none;
+      font-size: 14px;
+      font-weight: 700;
+      color: #111111;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      cursor: pointer;
+      padding: 8px 0;
+      text-align: left;
+    }
+
+    .coupon-input-group {
+      display: none;
+      margin-top: 10px;
+      gap: 8px;
+    }
+
+    .coupon-input-group.open {
+      display: flex;
+    }
+
+    .coupon-text-field {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1.5px solid var(--ikea-border);
+      border-radius: 6px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .coupon-text-field:focus {
+      border-color: #111111;
+    }
+
+    .btn-apply-coupon {
+      padding: 10px 18px;
+      background: #111111;
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-apply-coupon:hover {
+      background: #333333;
+    }
+
+    /* Delivery Estimate Box */
+    .delivery-estimates-notice {
+      background: var(--ikea-gray-bg);
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #333333;
+      text-align: left;
+    }
+
+    /* Continue to Checkout Main CTA */
+    .btn-checkout-cta {
+      width: 100%;
+      background: var(--ikea-blue);
+      color: #ffffff;
+      border: none;
+      border-radius: 40px;
+      padding: 16px 20px;
+      font-size: 15px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+      box-shadow: 0 4px 14px rgba(0, 88, 163, 0.25);
+    }
+
+    .btn-checkout-cta:hover {
+      background: var(--ikea-blue-hover);
+      box-shadow: 0 6px 20px rgba(0, 88, 163, 0.35);
+    }
+
+    .btn-checkout-cta:active {
+      transform: scale(0.99);
+    }
+
+    .cta-arrow-circle {
+      width: 32px;
+      height: 32px;
+      background: #ffffff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ikea-blue);
+      font-size: 16px;
+      font-weight: 900;
+      transition: transform 0.2s ease;
+    }
+
+    .btn-checkout-cta:hover .cta-arrow-circle {
+      transform: translateX(3px);
+    }
+
+    .return-policy-footer-link {
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: #484848;
+      text-decoration: underline;
+      cursor: pointer;
+      display: block;
+      margin-top: 4px;
+    }
+
+    .return-policy-footer-link:hover {
+      color: #111111;
+    }
+
+    /* Floating Support FAB */
+    .ikea-support-fab {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: var(--ikea-yellow);
+      color: #111111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      z-index: 999;
+      border: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .ikea-support-fab:hover {
+      transform: scale(1.08);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+    }
+
+    /* Modals */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-box {
+      background: #ffffff;
+      border-radius: 16px;
+      max-width: 460px;
+      width: 100%;
+      padding: 32px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+      position: relative;
+      transform: translateY(16px);
+      transition: transform 0.25s ease;
+    }
+
+    .modal-overlay.active .modal-box {
+      transform: translateY(0);
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #666;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-close-btn:hover {
+      background: #f0f0f0;
+      color: #111;
+    }
+
+    /* Empty Bag State */
+    .empty-bag-state {
+      text-align: center;
+      padding: 60px 20px;
+      background: #fafafa;
+      border-radius: 12px;
+      border: 1px dashed #dcdcdc;
+    }
+
+    .empty-bag-state h3 {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+
+    .empty-bag-state p {
+      color: #666;
+      margin-bottom: 24px;
+    }
+
+    .btn-shop-products {
+      display: inline-block;
+      background: var(--ikea-blue);
+      color: #fff;
+      padding: 12px 28px;
+      border-radius: 24px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    /* 4. Furniture Swap Requests & Cash Balance Section */
+    .swap-requests-card-section {
+      border: 1px solid var(--ikea-border);
+      border-radius: 12px;
+      padding: 24px;
+      background: #ffffff;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+    }
+
+    .swap-section-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .swap-badge-pill {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--ikea-blue);
+      background: #eef6fc;
+      padding: 4px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .swap-section-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: #111111;
+      letter-spacing: -0.3px;
+    }
+
+    .swap-section-desc {
+      font-size: 13px;
+      color: var(--ikea-text-subtle);
+      margin-top: 2px;
+    }
+
+    .btn-create-swap-offer {
+      background: #FFDB00;
+      color: #111111;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .btn-create-swap-offer:hover {
+      background: #e5c400;
+      transform: translateY(-1px);
+    }
+
+    .swap-tabs-nav {
+      display: flex;
+      gap: 12px;
+      border-bottom: 2px solid #f0f0f0;
+      margin-bottom: 20px;
+    }
+
+    .swap-tab-button {
+      background: none;
+      border: none;
+      padding: 10px 16px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #666666;
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 0.2s;
+    }
+
+    .swap-tab-button.active {
+      color: var(--ikea-blue);
+      border-bottom: 3px solid var(--ikea-blue);
+      margin-bottom: -3px;
+    }
+
+    .swap-count-badge {
+      background: #f0f0f0;
+      color: #333333;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 12px;
+    }
+
+    .swap-tab-button.active .swap-count-badge {
+      background: var(--ikea-blue);
+      color: #ffffff;
+    }
+
+    .swap-offer-card {
+      border: 1px solid var(--ikea-border);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 16px;
+      background: #fcfcfc;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .swap-offer-card:hover {
+      border-color: #bbbbbb;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    }
+
+    .swap-card-user-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #eeeeee;
+    }
+
+    .swap-user-profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .swap-user-img {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #ffffff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    }
+
+    .swap-user-details {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .swap-user-name-str {
+      font-size: 14px;
+      font-weight: 800;
+      color: #111111;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .swap-verified-check {
+      font-size: 10px;
+      background: #00853d;
+      color: #ffffff;
+      padding: 1px 6px;
+      border-radius: 10px;
+      font-weight: 800;
+    }
+
+    .swap-user-loc-str {
+      font-size: 12px;
+      color: #666666;
+    }
+
+    .swap-status-pill {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-pill-pending {
+      background: #fff8e1;
+      color: #b78103;
+      border: 1px solid #ffe082;
+    }
+
+    .status-pill-accepted {
+      background: #e8f5e9;
+      color: #2e7d32;
+      border: 1px solid #a5d6a7;
+    }
+
+    .status-pill-declined {
+      background: #ffebee;
+      color: #c62828;
+      border: 1px solid #ef9a9a;
+    }
+
+    .swap-comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 16px;
+      align-items: center;
+      background: #ffffff;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    @media (max-width: 640px) {
+      .swap-comparison-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+    }
+
+    .swap-item-column {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .swap-product-thumb {
+      width: 64px;
+      height: 64px;
+      object-fit: cover;
+      border-radius: 6px;
+      background: #f5f5f5;
+    }
+
+    .swap-product-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .swap-role-label {
+      font-size: 10px;
+      font-weight: 800;
+      color: #666666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .swap-product-name {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #111111;
+      margin: 2px 0;
+    }
+
+    .swap-product-val {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--ikea-blue);
+    }
+
+    .swap-icon-badge {
+      font-size: 20px;
+      color: #0058A3;
+      background: #eef6fc;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+    }
+
+    .swap-cash-notice-box {
+      background: #f0f7ff;
+      border: 1.5px solid #b3d7ff;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .swap-cash-notice-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .swap-cash-symbol {
+      font-size: 24px;
+    }
+
+    .swap-cash-text-title {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #003e75;
+    }
+
+    .swap-cash-text-detail {
+      font-size: 12px;
+      color: #446688;
+      margin-top: 2px;
+    }
+
+    .btn-custom-cash-adjustment {
+      background: #ffffff;
+      border: 1.5px solid #0058A3;
+      color: #0058A3;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 6px 12px;
+      border-radius: 14px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .btn-custom-cash-adjustment:hover {
+      background: #0058A3;
+      color: #ffffff;
+    }
+
+    .swap-actions-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-accept-swap-action {
+      background: #00853d;
+      color: #ffffff;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .btn-accept-swap-action:hover {
+      background: #006b31;
+      transform: translateY(-1px);
+    }
+
+    .btn-decline-swap-action {
+      background: #ffffff;
+      color: #cc0008;
+      border: 1.5px solid #cc0008;
+      padding: 9px 20px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .btn-decline-swap-action:hover {
+      background: #cc0008;
+      color: #ffffff;
+    }
+
+    .swap-accepted-banner {
+      background: #e8f5e9;
+      border: 1px solid #a5d6a7;
+      color: #2e7d32;
+      font-size: 12.5px;
+      font-weight: 700;
+      padding: 10px 14px;
+      border-radius: 6px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .swap-declined-banner {
+      background: #ffebee;
+      border: 1px solid #ef9a9a;
+      color: #c62828;
+      font-size: 12.5px;
+      font-weight: 700;
+      padding: 10px 14px;
+      border-radius: 6px;
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- 1. Top Utility Header -->
+  <div class="top-utility-bar">
+    <div class="top-utility-left">
+      <a class="utility-link" href="#" id="lang-selector">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="2" y1="12" x2="22" y2="12"></line>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+        </svg>
+        <span>IN | English</span>
+      </a>
+    </div>
+
+    <div class="top-utility-center">
+      <a class="utility-link" href="tel:18004194532">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+        </svg>
+        <span>1800 419 4532 for Shopping &amp; Design assistance</span>
+      </a>
+    </div>
+
+    <div class="top-utility-right">
+      <a class="utility-link" href="javascript:void(0)" onclick="openPincodeModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="1" y="3" width="15" height="13"></rect>
+          <polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon>
+          <circle cx="5.5" cy="18.5" r="2.5"></circle>
+          <circle cx="18.5" cy="18.5" r="2.5"></circle>
+        </svg>
+        <span id="top-pincode-display">Enter postal code</span>
+      </a>
+      <a class="utility-link" href="javascript:void(0)" onclick="alert('Stores available in: Navi Mumbai, Hyderabad, Bengaluru, Worli, R City')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+        <span>Select store</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- 2. Main IKEA Header -->
+  <header class="main-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <a href="/" title="IKEA Home" style="display:flex;align-items:center;">
+          <img src="/assets/image.png" alt="IKEA" style="height:36px;width:auto;object-fit:contain;display:block;" />
+        </a>
+
+        <ul class="main-nav-links">
+          <li><a href="/">Products</a></li>
+          <li><a href="/secondhand">Rooms</a></li>
+          <li><a href="/marketplace">Offers</a></li>
+          <li><a href="/intro">Inspiration</a></li>
+          <li><a href="/planner">Design/Support</a></li>
+        </ul>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="search-wrapper">
+        <svg class="search-icon-left" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" class="search-input-box" placeholder="What are you looking for?" />
+        <svg class="search-icon-right" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+          <circle cx="12" cy="13" r="4"></circle>
+        </svg>
+      </div>
+
+      <!-- Header Right -->
+      <div class="header-right">
+        <button class="header-action-btn" onclick="openAuthDialog()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          <span id="nav-user-greeting">Hej! Log in</span>
+        </button>
+
+        <button class="header-action-btn" title="Wishlist">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
+        </button>
+
+        <a href="/shopping-bag.html" class="header-action-btn bag-icon-wrap" title="Shopping Bag">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+          </svg>
+          <span class="bag-badge" id="header-bag-count">0</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 3. Main Page Content -->
+  <main class="main-page-container">
+    <div class="bag-grid-layout">
+
+      <!-- LEFT COLUMN -->
+      <div class="bag-left-column">
+        
+        <!-- Furniture Swap Requests Section -->
+        <div class="swap-requests-card-section" id="swap-requests-section">
+          <div class="swap-section-header">
+            <div>
+              <span class="swap-badge-pill">🔄 Circular Hub • 2nd Hand Furniture Swaps</span>
+              <h2 class="swap-section-title">Furniture Swap Requests</h2>
+              <p class="swap-section-desc">Manage incoming and outgoing 2nd-hand furniture exchange offers with automated fair-value cash balancing.</p>
+            </div>
+            <button class="btn-create-swap-offer" onclick="window.location.href='/marketplace'">+ Explore Furniture to Swap</button>
+          </div>
+
+          <!-- Swap Navigation Tabs -->
+          <div class="swap-tabs-nav">
+            <button class="swap-tab-button active" id="tab-swap-received" onclick="switchSwapTab('received')">
+              📥 Swap Requests Received <span class="swap-count-badge" id="badge-swap-received-count">2</span>
+            </button>
+            <button class="swap-tab-button" id="tab-swap-sent" onclick="switchSwapTab('sent')">
+              📤 Swap Requests Sent <span class="swap-count-badge" id="badge-swap-sent-count">1</span>
+            </button>
+          </div>
+
+          <!-- Swap List Container -->
+          <div id="swap-cards-list-container">
+            <!-- Rendered dynamically by JavaScript -->
+          </div>
+        </div>
+
+        <div class="bag-title-row">
+          <h1 class="bag-main-heading">Shopping bag</h1>
+          <button class="bag-more-options-btn" title="More options" onclick="toggleMoreMenu()">•••</button>
+        </div>
+
+        <div class="delivery-check-card" onclick="openPincodeModal()">
+          <div class="delivery-check-left">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+            <span id="delivery-banner-text">Check delivery and other services availability</span>
+          </div>
+          <svg class="delivery-check-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+
+        <!-- Dynamic Items Container -->
+        <div class="bag-items-list" id="bag-items-container">
+          <!-- Rendered dynamically by JavaScript -->
+        </div>
+
+        <!-- Everyday Essentials Carousel (From reference video) -->
+        <div class="essentials-section">
+          <h2 class="essentials-title">Everyday essentials for you</h2>
+          <div class="essentials-grid" id="essentials-grid-container">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN: Sticky Order Summary -->
+      <div class="bag-right-sidebar">
+        <div class="order-summary-card">
+          
+          <h2 class="summary-heading">Order summary</h2>
+
+          <div class="summary-products-row">
+            <span>Products</span>
+            <span id="summary-products-amount" style="font-weight:700;">Rs.0</span>
+          </div>
+
+          <div class="summary-subtext-note">
+            Shipping costs are calculated at checkout
+          </div>
+
+          <div class="summary-divider"></div>
+
+          <div class="summary-total-row">
+            <span>Total including GST</span>
+            <span class="summary-total-price" id="summary-total-amount">Rs.0</span>
+          </div>
+
+          <!-- IKEA Family Savings Card -->
+          <div class="ikea-family-promo-box">
+            <div class="family-badge-icon">IKEA</div>
+            <div class="family-promo-content">
+              <div class="family-promo-title">
+                Save <span id="family-saving-amount">Rs.3,000</span> with <span>IKEA Family</span>
+              </div>
+              <div>IKEA Family members also collect <strong id="reward-points-val">0</strong> reward points upon delivery.</div>
+              <div class="family-promo-links">
+                <a href="/login.html?redirect=/shopping-bag.html">Join or log in</a> | <a href="/marketplace">Explore what you can get</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Apply Coupon Code -->
+          <div>
+            <button class="coupon-accordion-btn" onclick="toggleCouponInput()">
+              <span>+ Apply coupon code</span>
+              <svg id="coupon-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div class="coupon-input-group" id="coupon-input-container">
+              <input type="text" id="coupon-code-input" class="coupon-text-field" placeholder="Enter coupon (e.g. FAMILY10)" />
+              <button class="btn-apply-coupon" onclick="applyCouponCode()">Apply</button>
+            </div>
+            <div id="coupon-status-msg" style="font-size:12px;margin-top:4px;display:none;"></div>
+          </div>
+
+          <div class="delivery-estimates-notice">
+            Delivery estimates will be available on the next page
+          </div>
+
+          <!-- Continue to Checkout Button -->
+          <button class="btn-checkout-cta" id="continue-checkout-cta-btn" onclick="openIkeaFamilyCheckoutModal()">
+            <span>Continue to checkout</span>
+            <div class="cta-arrow-circle">→</div>
+          </button>
+
+          <a class="return-policy-footer-link" onclick="alert('IKEA 365-day Return Policy: If you are not entirely satisfied with your purchase, return it within 365 days with original receipt!')">
+            365-day Exchange or Return Policy
+          </a>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- IKEA Family Checkout Modal (from reference video) -->
+  <div class="modal-overlay" id="ikea-family-modal">
+    <div class="modal-box">
+      <button class="modal-close-btn" onclick="closeIkeaFamilyModal()">&times;</button>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+        <div style="background:#0058A3;color:#FFDB00;font-weight:900;padding:3px 10px;border-radius:4px;font-size:14px;">IKEA Family</div>
+        <h3 style="font-size:18px;font-weight:800;color:#111;">Save with IKEA Family</h3>
+      </div>
+      <ul style="font-size:13px;color:#484848;line-height:1.6;margin-bottom:24px;padding-left:18px;">
+        <li>Collect reward points upon delivery</li>
+        <li>Get special member-only prices</li>
+        <li>Keep track of your orders and receipts</li>
+        <li>Save time during checkout</li>
+      </ul>
+      
+      <button onclick="window.location.href='/login.html?redirect=/checkout.html'" style="width:100%;padding:14px;background:#0058A3;color:#fff;border:none;border-radius:28px;font-weight:700;font-size:14px;cursor:pointer;margin-bottom:10px;">
+        Join or log in
+      </button>
+      <button onclick="window.location.href='/checkout.html'" style="width:100%;padding:14px;background:#ffffff;color:#111111;border:1.5px solid #111;border-radius:28px;font-weight:700;font-size:14px;cursor:pointer;">
+        Continue as guest
+      </button>
+    </div>
+  </div>
+
+  <!-- Postal Code Checker Modal -->
+  <div class="modal-overlay" id="pincode-modal">
+    <div class="modal-box">
+      <button class="modal-close-btn" onclick="closePincodeModal()">&times;</button>
+      <h3 style="font-size:18px;font-weight:800;margin-bottom:8px;">Check delivery availability</h3>
+      <p style="font-size:13px;color:#666;margin-bottom:18px;">Enter your 6-digit postal PIN code to check service options and delivery speed.</p>
+      
+      <div style="display:flex;gap:8px;margin-bottom:12px;">
+        <input type="text" id="modal-pincode-input" maxlength="6" class="coupon-text-field" placeholder="e.g. 400001, 110001" />
+        <button class="btn-apply-coupon" onclick="verifyPincode()">Check</button>
+      </div>
+      <div id="modal-pincode-result" style="font-size:13px;margin-top:10px;"></div>
+    </div>
+  </div>
+
+  <!-- Support FAB -->
+  <button class="ikea-support-fab" title="IKEA Virtual Assistant" onclick="alert('IKEA Support Assistant is online. How can we help you?')">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+      <circle cx="9" cy="10" r="1" fill="#111"></circle>
+      <circle cx="15" cy="10" r="1" fill="#111"></circle>
+    </svg>
+  </button>
+
+  <script>
+    const EVERYDAY_ESSENTIALS = [
+      {
+        id: "ess-001",
+        name: "BEVARA",
+        desc: "Sealing clip, green/blue, pack of 30",
+        price: 49,
+        image: "https://images.unsplash.com/photo-1584992236310-6edddc08acff?auto=format&fit=crop&w=300&q=80"
+      },
+      {
+        id: "ess-002",
+        name: "LILLNAGGEN",
+        desc: "Squeegee, glass/tile wiper",
+        price: 99,
+        image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=300&q=80"
+      },
+      {
+        id: "ess-003",
+        name: "PRODUKT",
+        desc: "Milk frother, black",
+        price: 99,
+        image: "https://images.unsplash.com/photo-1517256064527-09c73fc73e38?auto=format&fit=crop&w=300&q=80"
+      },
+      {
+        id: "ess-004",
+        name: "SVARTSIK",
+        desc: "Scissors, set of 3, stainless steel",
+        price: 199,
+        image: "https://images.unsplash.com/photo-1590736969955-71cc94801759?auto=format&fit=crop&w=300&q=80"
+      },
+      {
+        id: "ess-005",
+        name: "RINNIG",
+        desc: "Cleaning gloves, bright yellow/white",
+        price: 149,
+        image: "https://images.unsplash.com/photo-1584992236310-6edddc08acff?auto=format&fit=crop&w=300&q=80"
+      },
+      {
+        id: "ess-006",
+        name: "KORKEN",
+        desc: "Bottle with stopper, clear glass, 1 L",
+        price: 149,
+        image: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=300&q=80"
+      }
+    ];
+
+    let bagItems = [];
+    let appliedCoupon = null;
+
+    function initBag() {
+      const stored = localStorage.getItem('ikea_cart_items') || sessionStorage.getItem('ikea_bag_items');
+      if (stored) {
+        try {
+          bagItems = JSON.parse(stored);
+        } catch (e) {
+          bagItems = [];
+        }
+      } else {
+        bagItems = [];
+      }
+
+      if (!bagItems || !Array.isArray(bagItems)) {
+        bagItems = [];
+      }
+
+      renderBag();
+      renderEssentials();
+    }
+
+    function saveBag() {
+      localStorage.setItem('ikea_cart_items', JSON.stringify(bagItems));
+      sessionStorage.setItem('ikea_bag_items', JSON.stringify(bagItems));
+      if (window.updateIkeaCartBadges) {
+        window.updateIkeaCartBadges();
+      }
+    }
+
+    function formatINR(val) {
+      return 'Rs.' + Number(val).toLocaleString('en-IN');
+    }
+
+    function renderBag() {
+      const container = document.getElementById('bag-items-container');
+      const totalCount = bagItems.reduce((acc, item) => acc + (item.quantity || 1), 0);
+      document.getElementById('header-bag-count').textContent = totalCount;
+
+      if (bagItems.length === 0) {
+        container.innerHTML = `
+          <div class="empty-bag-state">
+            <h3>Your shopping bag is empty</h3>
+            <p>Explore thousands of home furnishing designs and circular marketplace items.</p>
+            <a href="/marketplace" class="btn-shop-products">Explore Marketplace</a>
+          </div>
+        `;
+        document.getElementById('summary-products-amount').textContent = 'Rs.0';
+        document.getElementById('summary-total-amount').textContent = 'Rs.0';
+        document.getElementById('reward-points-val').textContent = '0';
+        return;
+      }
+
+      let html = '';
+      let subtotal = 0;
+      let totalSavings = 0;
+
+      bagItems.forEach((item, index) => {
+        const itemTotal = item.price * (item.quantity || 1);
+        subtotal += itemTotal;
+        if (item.originalPrice && item.originalPrice > item.price) {
+          totalSavings += (item.originalPrice - item.price) * (item.quantity || 1);
+        }
+
+        html += `
+          <div class="bag-item-card" id="bag-item-${item.id}">
+            <div class="bag-item-media">
+              <img src="${item.image || 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80'}" alt="${item.name}" class="bag-item-img" />
+              <span class="bag-item-artno">${item.articleNumber || '104.079.28'}</span>
+            </div>
+
+            <div class="bag-item-info">
+              <div>
+                <div class="bag-item-top">
+                  <div>
+                    <div class="bag-item-name">${item.name}</div>
+                    <div class="bag-item-desc">${item.desc || item.description || ''}</div>
+                    ${item.familyDiscount ? `<div class="bag-family-discount-tag">${item.familyDiscount}</div>` : ''}
+                  </div>
+                  <div class="bag-item-price">${formatINR(itemTotal)}</div>
+                </div>
+
+                ${item.hasAccessories ? `
+                  <div class="bag-complete-with" onclick="alert('Accessory options: Storage baskets, LED clips, and care kits available at checkout!')">
+                    <div class="complete-thumb-icons">
+                      <span class="complete-thumb" style="background:#e0e0e0;"></span>
+                      <span class="complete-thumb" style="background:#b0c4de;"></span>
+                    </div>
+                    <span>Complete with</span>
+                  </div>
+                ` : ''}
+              </div>
+
+              <div class="bag-item-bottom-row">
+                <div class="bag-item-actions-left">
+                  <button class="btn-save-later" onclick="saveForLater(${index})">Save for later</button>
+                  <button class="btn-delete-item" title="Remove item" onclick="removeItem(${index})">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="3 6 5 6 21 6"></polyline>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                  </button>
+                </div>
+
+                <div class="qty-stepper-pill">
+                  <button class="qty-btn" onclick="updateQty(${index}, -1)">−</button>
+                  <span class="qty-number">${item.quantity || 1}</span>
+                  <button class="qty-btn" onclick="updateQty(${index}, 1)">+</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+
+      let finalTotal = subtotal;
+      if (appliedCoupon) {
+        if (appliedCoupon.type === 'percent') {
+          finalTotal = Math.round(subtotal * (1 - appliedCoupon.value / 100));
+        } else if (appliedCoupon.type === 'flat') {
+          finalTotal = Math.max(0, subtotal - appliedCoupon.value);
+        }
+      }
+
+      document.getElementById('summary-products-amount').textContent = formatINR(subtotal);
+      document.getElementById('summary-total-amount').textContent = formatINR(finalTotal);
+      
+      if (totalSavings > 0) {
+        document.getElementById('family-saving-amount').textContent = formatINR(totalSavings);
+      }
+      
+      const rewardPoints = Math.round(finalTotal * 0.02);
+      document.getElementById('reward-points-val').textContent = rewardPoints;
+    }
+
+    function renderEssentials() {
+      const grid = document.getElementById('essentials-grid-container');
+      if (!grid) return;
+      grid.innerHTML = EVERYDAY_ESSENTIALS.map(ess => `
+        <div class="essential-card">
+          <img src="${ess.image}" alt="${ess.name}" class="essential-img" />
+          <div class="essential-name">${ess.name}</div>
+          <div class="essential-desc">${ess.desc}</div>
+          <div class="essential-price-row">
+            <span class="essential-price">Rs.${ess.price}</span>
+            <button class="essential-add-btn" title="Add ${ess.name}" onclick="addEssentialItem('${ess.id}')">+</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function addEssentialItem(essId) {
+      const found = EVERYDAY_ESSENTIALS.find(e => e.id === essId);
+      if (!found) return;
+      bagItems.push({
+        id: found.id,
+        name: found.name,
+        desc: found.desc,
+        articleNumber: '802.' + Math.floor(100+Math.random()*900) + '.44',
+        price: found.price,
+        originalPrice: found.price,
+        quantity: 1,
+        image: found.image,
+        hasAccessories: false
+      });
+      saveBag();
+      renderBag();
+      if (window.showIkeaLiveToast) {
+        window.showIkeaLiveToast(found.name, 'Rs.' + found.price, found.image);
+      }
+    }
+
+    function updateQty(index, change) {
+      if (bagItems[index]) {
+        bagItems[index].quantity = (bagItems[index].quantity || 1) + change;
+        if (bagItems[index].quantity <= 0) {
+          bagItems.splice(index, 1);
+        }
+        saveBag();
+        renderBag();
+      }
+    }
+
+    function removeItem(index) {
+      if (confirm("Are you sure you want to remove this item from your shopping bag?")) {
+        bagItems.splice(index, 1);
+        saveBag();
+        renderBag();
+      }
+    }
+
+    function saveForLater(index) {
+      const item = bagItems[index];
+      alert(`"${item.name}" has been saved to your IKEA Wishlist.`);
+      bagItems.splice(index, 1);
+      saveBag();
+      renderBag();
+    }
+
+    function toggleCouponInput() {
+      const el = document.getElementById('coupon-input-container');
+      const chevron = document.getElementById('coupon-chevron');
+      if (el.classList.contains('open')) {
+        el.classList.remove('open');
+        chevron.style.transform = 'rotate(0deg)';
+      } else {
+        el.classList.add('open');
+        chevron.style.transform = 'rotate(180deg)';
+      }
+    }
+
+    function applyCouponCode() {
+      const code = (document.getElementById('coupon-code-input').value || '').trim().toUpperCase();
+      const status = document.getElementById('coupon-status-msg');
+      status.style.display = 'block';
+
+      if (code === 'FAMILY10' || code === 'IKEA10') {
+        appliedCoupon = { code: code, type: 'percent', value: 10 };
+        status.style.color = '#00853d';
+        status.textContent = '✓ 10% IKEA Family Coupon applied!';
+      } else if (code === 'SPYLT20') {
+        appliedCoupon = { code: code, type: 'percent', value: 20 };
+        status.style.color = '#00853d';
+        status.textContent = '✓ 20% SPYLT Special Discount applied!';
+      } else {
+        appliedCoupon = null;
+        status.style.color = '#e00751';
+        status.textContent = 'Invalid coupon code. Try FAMILY10 or SPYLT20';
+      }
+      renderBag();
+    }
+
+    function openIkeaFamilyCheckoutModal() {
+      if (bagItems.length === 0) {
+        alert("Your shopping bag is empty. Please add items before proceeding to checkout.");
+        return;
+      }
+      document.getElementById('ikea-family-modal').classList.add('active');
+    }
+
+    function closeIkeaFamilyModal() {
+      document.getElementById('ikea-family-modal').classList.remove('active');
+    }
+
+    function openPincodeModal() {
+      document.getElementById('pincode-modal').classList.add('active');
+    }
+
+    function closePincodeModal() {
+      document.getElementById('pincode-modal').classList.remove('active');
+    }
+
+    function verifyPincode() {
+      const pin = document.getElementById('modal-pincode-input').value.trim();
+      const res = document.getElementById('modal-pincode-result');
+      if (/^[1-9][0-9]{5}$/.test(pin)) {
+        res.innerHTML = `<span style="color:#00853d;font-weight:700;">✓ Delivery available for PIN ${pin}</span><br/><span style="color:#666;">Truck and parcel delivery available in 2-4 business days.</span>`;
+        document.getElementById('top-pincode-display').textContent = 'PIN: ' + pin;
+        document.getElementById('delivery-banner-text').textContent = `Delivering to ${pin} (Services Available)`;
+        sessionStorage.setItem('ikea_delivery_pincode', pin);
+        setTimeout(closePincodeModal, 1500);
+      } else {
+        res.innerHTML = `<span style="color:#e00751;font-weight:700;">Please enter a valid 6-digit Indian PIN code.</span>`;
+      }
+    }
+
+    function toggleMoreMenu() {
+      if (confirm("Clear your entire shopping bag?")) {
+        bagItems = [];
+        saveBag();
+        renderBag();
+      }
+    }
+
+    function openAuthDialog() {
+      window.location.href = '/login.html?redirect=' + encodeURIComponent(window.location.pathname);
+    }
+
+    // -------------------------------------------------------------
+    // Furniture Swap Requests Engine & Cash Balance Calculation
+    // -------------------------------------------------------------
+    const SEEDED_SWAP_REQUESTS = [
+      {
+        id: "swap-rec-101",
+        type: "received",
+        status: "pending",
+        senderName: "Priya Nair",
+        senderLocation: "Indiranagar, Bengaluru",
+        senderAvatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=120&q=80",
+        senderPhone: "+91 98765 43210",
+        myProduct: {
+          id: "prod-table-1000",
+          name: "LISABO Solid Ash Wood Table",
+          price: 1000,
+          image: "https://images.unsplash.com/photo-1530018607912-eff2daa1bac4?auto=format&fit=crop&w=600&q=80",
+          condition: "Like New"
+        },
+        theirProduct: {
+          id: "prod-chair-900",
+          name: "Ergonomic Desk Chair",
+          price: 900,
+          image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=600&q=80",
+          condition: "Good"
+        },
+        customCashAdjustment: null,
+        timestamp: "Today, 10:15 AM"
+      },
+      {
+        id: "swap-rec-102",
+        type: "received",
+        status: "pending",
+        senderName: "Aarav Sharma",
+        senderLocation: "Koramangala, Bengaluru",
+        senderAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80",
+        senderPhone: "+91 98123 45678",
+        myProduct: {
+          id: "prod-couch-15000",
+          name: "SÖDERHAMN 3-Seater Sofa",
+          price: 15000,
+          image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=600&q=80",
+          condition: "Excellent"
+        },
+        theirProduct: {
+          id: "prod-wardrobe-12000",
+          name: "HEMNES 4-Door Wardrobe",
+          price: 12000,
+          image: "https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&w=600&q=80",
+          condition: "Like New"
+        },
+        customCashAdjustment: null,
+        timestamp: "Yesterday, 4:30 PM"
+      },
+      {
+        id: "swap-sent-201",
+        type: "sent",
+        status: "pending",
+        recipientName: "SecondHand Studio",
+        recipientLocation: "Whitefield, Bengaluru",
+        recipientAvatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80",
+        myProduct: {
+          id: "prod-kallax-3200",
+          name: "KALLAX Shelf Unit 4x4",
+          price: 3200,
+          image: "https://images.unsplash.com/photo-1594631252845-29fc4cc8cde9?auto=format&fit=crop&w=600&q=80",
+          condition: "Like New"
+        },
+        theirProduct: {
+          id: "prod-bed-8999",
+          name: "Full-Size Bed with White Linen",
+          price: 8999,
+          image: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=600&q=80",
+          condition: "Excellent"
+        },
+        customCashAdjustment: null,
+        timestamp: "2 days ago"
+      }
+    ];
+
+    let currentSwapTab = 'received';
+    let swapRequests = [];
+
+    function initSwapRequests() {
+      const stored = localStorage.getItem('ikea_swap_requests');
+      if (stored) {
+        try {
+          swapRequests = JSON.parse(stored);
+        } catch(e) {
+          swapRequests = SEEDED_SWAP_REQUESTS;
+        }
+      } else {
+        swapRequests = SEEDED_SWAP_REQUESTS;
+        localStorage.setItem('ikea_swap_requests', JSON.stringify(swapRequests));
+      }
+      renderSwapRequests();
+    }
+
+    function saveSwapRequests() {
+      localStorage.setItem('ikea_swap_requests', JSON.stringify(swapRequests));
+      renderSwapRequests();
+    }
+
+    function switchSwapTab(tab) {
+      currentSwapTab = tab;
+      const rBtn = document.getElementById('tab-swap-received');
+      const sBtn = document.getElementById('tab-swap-sent');
+      if (rBtn) rBtn.classList.toggle('active', tab === 'received');
+      if (sBtn) sBtn.classList.toggle('active', tab === 'sent');
+      renderSwapRequests();
+    }
+
+    function calculateSwapCashBalance(request) {
+      const sendingPrice = request.myProduct ? Number(request.myProduct.price) : 0;
+      const receivingPrice = request.theirProduct ? Number(request.theirProduct.price) : 0;
+      const otherPersonName = request.senderName || request.recipientName || 'Other party';
+
+      if (request.customCashAdjustment !== null && request.customCashAdjustment !== undefined) {
+        const custom = Number(request.customCashAdjustment);
+        if (custom > 0) {
+          return {
+            amount: custom,
+            payer: 'other',
+            isCustom: true,
+            title: `+Rs. ${custom.toLocaleString('en-IN')} Extra Cash Required`,
+            detail: `${otherPersonName} will provide Rs. ${custom.toLocaleString('en-IN')} extra cash along with their item (Customized adjustment).`
+          };
+        } else if (custom < 0) {
+          const absVal = Math.abs(custom);
+          return {
+            amount: absVal,
+            payer: 'me',
+            isCustom: true,
+            title: `+Rs. ${absVal.toLocaleString('en-IN')} Extra Cash Required From You`,
+            detail: `You will provide Rs. ${absVal.toLocaleString('en-IN')} extra cash along with your item.`
+          };
+        } else {
+          return {
+            amount: 0,
+            payer: 'none',
+            isCustom: true,
+            title: `Even 1:1 Swap (No Extra Cash)`,
+            detail: `Both items agreed to be exchanged without cash balance.`
+          };
+        }
+      }
+
+      // Default calculation: Price Difference
+      const diff = sendingPrice - receivingPrice;
+      if (diff > 0) {
+        // Sending (1000) > Receiving (900) => Other person pays +100
+        return {
+          amount: diff,
+          payer: 'other',
+          isCustom: false,
+          title: `+Rs. ${diff.toLocaleString('en-IN')} Extra Cash from ${otherPersonName}`,
+          detail: `Because your item (Rs. ${sendingPrice.toLocaleString('en-IN')}) is valued higher than ${otherPersonName}'s item (Rs. ${receivingPrice.toLocaleString('en-IN')}), ${otherPersonName} provides Rs. ${diff.toLocaleString('en-IN')} extra cash upon exchange.`
+        };
+      } else if (diff < 0) {
+        const absDiff = Math.abs(diff);
+        return {
+          amount: absDiff,
+          payer: 'me',
+          isCustom: false,
+          title: `+Rs. ${absDiff.toLocaleString('en-IN')} Extra Cash from You`,
+          detail: `Because ${otherPersonName}'s item (Rs. ${receivingPrice.toLocaleString('en-IN')}) is valued higher than your item (Rs. ${sendingPrice.toLocaleString('en-IN')}), you provide Rs. ${absDiff.toLocaleString('en-IN')} extra cash upon exchange.`
+        };
+      } else {
+        return {
+          amount: 0,
+          payer: 'none',
+          isCustom: false,
+          title: `Even 1:1 Swap (No Extra Cash)`,
+          detail: `Both items have equal listed value (Rs. ${sendingPrice.toLocaleString('en-IN')}).`
+        };
+      }
+    }
+
+    function renderSwapRequests() {
+      const container = document.getElementById('swap-cards-list-container');
+      if (!container) return;
+
+      const receivedList = swapRequests.filter(r => r.type === 'received');
+      const sentList = swapRequests.filter(r => r.type === 'sent');
+
+      const recBadge = document.getElementById('badge-swap-received-count');
+      const sentBadge = document.getElementById('badge-swap-sent-count');
+      if (recBadge) recBadge.textContent = receivedList.length;
+      if (sentBadge) sentBadge.textContent = sentList.length;
+
+      const activeList = currentSwapTab === 'received' ? receivedList : sentList;
+
+      if (activeList.length === 0) {
+        container.innerHTML = `
+          <div style="padding:24px;text-align:center;color:#666;font-size:13px;border:1px dashed #ddd;border-radius:8px;">
+            No ${currentSwapTab} furniture swap requests at the moment.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = activeList.map(req => {
+        const cashObj = calculateSwapCashBalance(req);
+        const isReceived = req.type === 'received';
+        const partnerName = isReceived ? req.senderName : req.recipientName;
+        const partnerLoc = isReceived ? req.senderLocation : req.recipientLocation;
+        const partnerAvatar = isReceived ? req.senderAvatar : req.recipientAvatar;
+
+        let statusClass = 'status-pill-pending';
+        let statusText = 'Pending Review';
+        if (req.status === 'accepted') {
+          statusClass = 'status-pill-accepted';
+          statusText = 'Accepted';
+        } else if (req.status === 'declined') {
+          statusClass = 'status-pill-declined';
+          statusText = 'Declined';
+        }
+
+        return `
+          <div class="swap-offer-card" id="card-${req.id}">
+            <div class="swap-card-user-bar">
+              <div class="swap-user-profile">
+                <img src="${partnerAvatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80'}" alt="${partnerName}" class="swap-user-img" />
+                <div class="swap-user-details">
+                  <div class="swap-user-name-str">
+                    <span>${partnerName}</span>
+                    <span class="swap-verified-check">✓ Verified Member</span>
+                  </div>
+                  <div class="swap-user-loc-str">📍 ${partnerLoc} • ${req.timestamp}</div>
+                </div>
+              </div>
+              <span class="swap-status-pill ${statusClass}">${statusText}</span>
+            </div>
+
+            <!-- Products Comparison Grid -->
+            <div class="swap-comparison-grid">
+              <div class="swap-item-column">
+                <img src="${req.myProduct.image}" alt="${req.myProduct.name}" class="swap-product-thumb" />
+                <div class="swap-product-info">
+                  <span class="swap-role-label">${isReceived ? 'Your Listed Item (Sending)' : 'Your Offered Item'}</span>
+                  <div class="swap-product-name">${req.myProduct.name}</div>
+                  <div class="swap-product-val">Rs. ${Number(req.myProduct.price).toLocaleString('en-IN')}</div>
+                </div>
+              </div>
+
+              <div class="swap-icon-badge">↔️</div>
+
+              <div class="swap-item-column">
+                <img src="${req.theirProduct.image}" alt="${req.theirProduct.name}" class="swap-product-thumb" />
+                <div class="swap-product-info">
+                  <span class="swap-role-label">${isReceived ? `${partnerName}'s Offered Item (Receiving)` : `${partnerName}'s Requested Item`}</span>
+                  <div class="swap-product-name">${req.theirProduct.name}</div>
+                  <div class="swap-product-val">Rs. ${Number(req.theirProduct.price).toLocaleString('en-IN')}</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Cash Difference Box -->
+            <div class="swap-cash-notice-box">
+              <div class="swap-cash-notice-left">
+                <span class="swap-cash-symbol">💵</span>
+                <div>
+                  <div class="swap-cash-text-title">${cashObj.title}</div>
+                  <div class="swap-cash-text-detail">${cashObj.detail}</div>
+                </div>
+              </div>
+
+              ${req.status === 'pending' ? `
+                <button class="btn-custom-cash-adjustment" onclick="adjustSwapCash('${req.id}')" title="Modify extra money amount">
+                  ⚙️ Adjust Extra Cash
+                </button>
+              ` : ''}
+            </div>
+
+            <!-- Actions Row -->
+            <div class="swap-actions-container">
+              ${req.status === 'pending' ? `
+                ${isReceived ? `
+                  <button class="btn-accept-swap-action" onclick="acceptSwapRequest('${req.id}')">
+                    ✓ Accept Swap (${cashObj.amount > 0 ? (cashObj.payer === 'other' ? '+' + formatINR(cashObj.amount) + ' cash' : '-' + formatINR(cashObj.amount) + ' cash') : 'Even'})
+                  </button>
+                  <button class="btn-decline-swap-action" onclick="declineSwapRequest('${req.id}')">
+                    ✕ Decline Swap
+                  </button>
+                ` : `
+                  <button class="btn-decline-swap-action" onclick="cancelSwapRequest('${req.id}')">
+                    🗑️ Cancel Request
+                  </button>
+                `}
+              ` : req.status === 'accepted' ? `
+                <div class="swap-accepted-banner">
+                  <span>✓ Swap Confirmed! Scheduled for door-to-door circular pickup &amp; delivery.</span>
+                  ${cashObj.amount > 0 ? `<span>Cash Balance: <strong>${formatINR(cashObj.amount)}</strong> (${cashObj.payer === 'other' ? 'To Collect' : 'To Pay'})</span>` : ''}
+                </div>
+              ` : `
+                <div class="swap-declined-banner">
+                  ✕ Swap request was declined.
+                </div>
+              `}
+            </div>
+
+          </div>
+        `;
+      }).join('');
+    }
+
+    function acceptSwapRequest(id) {
+      const found = swapRequests.find(r => r.id === id);
+      if (!found) return;
+
+      const cashObj = calculateSwapCashBalance(found);
+      let confirmMsg = `Confirm accept swap with ${found.senderName}?\n\n• Your Item: ${found.myProduct.name} (Rs. ${found.myProduct.price})\n• Offered Item: ${found.theirProduct.name} (Rs. ${found.theirProduct.price})`;
+      if (cashObj.amount > 0) {
+        confirmMsg += `\n• Extra Cash Adjustment: ${cashObj.title}`;
+      }
+
+      if (confirm(confirmMsg)) {
+        found.status = 'accepted';
+        saveSwapRequests();
+        alert(`🎉 Swap accepted with ${found.senderName}!\n\nAn IKEA Circular Courier has been notified. Contact details: ${found.senderPhone || 'Shared upon pickup'}.`);
+      }
+    }
+
+    function declineSwapRequest(id) {
+      const found = swapRequests.find(r => r.id === id);
+      if (!found) return;
+
+      if (confirm(`Decline swap offer from ${found.senderName}?`)) {
+        found.status = 'declined';
+        saveSwapRequests();
+      }
+    }
+
+    function cancelSwapRequest(id) {
+      if (confirm("Cancel this sent swap request?")) {
+        swapRequests = swapRequests.filter(r => r.id !== id);
+        saveSwapRequests();
+      }
+    }
+
+    function adjustSwapCash(id) {
+      const found = swapRequests.find(r => r.id === id);
+      if (!found) return;
+
+      const currentCash = calculateSwapCashBalance(found).amount;
+      const input = prompt(`Adjust Extra Money Required for Swap (in Rs.):\n\n(Enter positive number if receiving party pays extra, negative if you pay extra, or 0 for even swap)`, currentCash || 100);
+
+      if (input !== null) {
+        const val = Number(input);
+        if (!isNaN(val)) {
+          found.customCashAdjustment = val;
+          saveSwapRequests();
+          alert(`Extra cash balance updated to Rs. ${Math.abs(val)}.`);
+        }
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initBag();
+      initSwapRequests();
+      const userName = localStorage.getItem('ikea_user_name');
+      if (userName) {
+        const greeting = document.getElementById('nav-user-greeting');
+        if (greeting) greeting.textContent = 'Hej, ' + userName;
+      }
+    });
+  </script>
+</body>
+
+</html>

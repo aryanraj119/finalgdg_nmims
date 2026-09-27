@@ -1,0 +1,1461 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <link rel="icon" type="image/png" href="/assets/ikea-logo.png" />
+  <title>Checkout — IKEA & SPYLT Order Delivery</title>
+
+  <!-- Razorpay Checkout.js Official SDK -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+  <style>
+    :root {
+      --ikea-blue: #0058a3;
+      --ikea-blue-hover: #004b8c;
+      --ikea-yellow: #ffdb00;
+      --ikea-dark: #111111;
+      --ikea-gray-bg: #f5f5f5;
+      --ikea-border: #dfdfdf;
+      --ikea-green: #00853d;
+      --ikea-text-muted: #666666;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: #f7f7f7;
+      color: var(--ikea-dark);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    /* Top Navigation Bar */
+    .checkout-nav {
+      background: #ffffff;
+      border-bottom: 1px solid var(--ikea-border);
+      padding: 16px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .checkout-nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .ikea-logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .ikea-logo-box {
+      background: var(--ikea-blue);
+      color: var(--ikea-yellow);
+      font-weight: 900;
+      font-size: 22px;
+      letter-spacing: 1px;
+      padding: 4px 14px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    .nav-secure-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ikea-text-muted);
+      background: var(--ikea-gray-bg);
+      padding: 6px 14px;
+      border-radius: 20px;
+    }
+
+    /* Main Container */
+    .checkout-container {
+      max-width: 1200px;
+      margin: 32px auto 64px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 36px;
+    }
+
+    @media (min-width: 960px) {
+      .checkout-container {
+        grid-template-columns: 1fr 400px;
+        align-items: start;
+      }
+    }
+
+    /* Left Column: Sequential Accordion */
+    .accordion-section {
+      background: #ffffff;
+      border: 1px solid var(--ikea-border);
+      border-radius: 12px;
+      margin-bottom: 20px;
+      overflow: hidden;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .accordion-section.active {
+      border-color: var(--ikea-blue);
+      box-shadow: 0 4px 20px rgba(0, 88, 163, 0.08);
+    }
+
+    .accordion-section.disabled {
+      opacity: 0.6;
+      background: #fafafa;
+    }
+
+    .accordion-header {
+      padding: 22px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .accordion-section.disabled .accordion-header {
+      cursor: not-allowed;
+    }
+
+    .step-indicator-title {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .step-number {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #e5e5e5;
+      color: var(--ikea-dark);
+      font-weight: 700;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .accordion-section.active .step-number {
+      background: var(--ikea-blue);
+      color: #ffffff;
+    }
+
+    .accordion-section.completed .step-number {
+      background: var(--ikea-green);
+      color: #ffffff;
+    }
+
+    .step-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--ikea-dark);
+    }
+
+    .step-edit-btn {
+      background: none;
+      border: none;
+      color: var(--ikea-blue);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
+    .step-edit-btn:hover {
+      text-decoration: underline;
+    }
+
+    .accordion-body {
+      padding: 0 24px 24px 24px;
+      border-top: 1px solid #f0f0f0;
+      display: none;
+    }
+
+    .accordion-section.active .accordion-body {
+      display: block;
+    }
+
+    /* Completed Summary Banner */
+    .step-completed-summary {
+      padding: 0 24px 18px 72px;
+      font-size: 14px;
+      color: #444;
+      display: none;
+    }
+
+    .accordion-section.completed:not(.active) .step-completed-summary {
+      display: block;
+    }
+
+    /* Form Fields & Cards */
+    .form-group {
+      margin-top: 18px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #333;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 13px 16px;
+      border: 1.5px solid var(--ikea-border);
+      border-radius: 8px;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s;
+      background: #ffffff;
+      color: var(--ikea-dark);
+    }
+
+    .form-input:focus {
+      border-color: var(--ikea-blue);
+    }
+
+    .form-input.error {
+      border-color: #e00751;
+      background: #fff8f9;
+    }
+
+    .form-error-msg {
+      color: #e00751;
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 4px;
+      display: none;
+    }
+
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    @media (min-width: 600px) {
+      .form-grid-2 {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    /* Delivery Option Selectable Cards */
+    .delivery-options-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    @media (min-width: 600px) {
+      .delivery-options-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .delivery-card {
+      border: 2px solid var(--ikea-border);
+      border-radius: 10px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .delivery-card:hover {
+      border-color: #999;
+    }
+
+    .delivery-card.selected {
+      border-color: var(--ikea-blue);
+      background: #f4f8fc;
+    }
+
+    .delivery-card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .delivery-radio {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--ikea-blue);
+      cursor: pointer;
+    }
+
+    .delivery-icon-wrap {
+      width: 36px;
+      height: 36px;
+      background: #eef4fa;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ikea-blue);
+    }
+
+    .delivery-card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ikea-dark);
+    }
+
+    .delivery-card-desc {
+      font-size: 13px;
+      color: var(--ikea-text-muted);
+      margin-left: 30px;
+    }
+
+    .delivery-card-fee {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--ikea-blue);
+      margin-top: 12px;
+      margin-left: 30px;
+    }
+
+    .delivery-card-fee.free {
+      color: var(--ikea-green);
+    }
+
+    /* Buttons */
+    .btn-ikea-primary {
+      background: var(--ikea-blue);
+      color: #ffffff;
+      border: none;
+      padding: 15px 28px;
+      border-radius: 30px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      margin-top: 22px;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .btn-ikea-primary:hover:not(:disabled) {
+      background: var(--ikea-blue-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-ikea-primary:disabled {
+      background: #cccccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Right Column: Sticky Order Summary */
+    .summary-card {
+      background: #ffffff;
+      border: 1px solid var(--ikea-border);
+      border-radius: 12px;
+      padding: 24px;
+      position: sticky;
+      top: 90px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    }
+
+    .summary-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #f0f0f0;
+      padding-bottom: 16px;
+      margin-bottom: 16px;
+    }
+
+    .summary-title {
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .order-item-row {
+      display: flex;
+      gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid #f5f5f5;
+    }
+
+    .order-item-img {
+      width: 64px;
+      height: 64px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: #f0f0f0;
+      flex-shrink: 0;
+    }
+
+    .order-item-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .order-item-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ikea-dark);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .order-item-sub {
+      font-size: 12px;
+      color: var(--ikea-text-muted);
+      margin: 2px 0;
+    }
+
+    .order-item-price {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ikea-dark);
+    }
+
+    /* Summary Calculations */
+    .summary-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 14px;
+      color: #555555;
+      margin-bottom: 10px;
+    }
+
+    .summary-line.total {
+      border-top: 1.5px solid #eaeaea;
+      padding-top: 14px;
+      margin-top: 14px;
+      font-size: 19px;
+      font-weight: 900;
+      color: var(--ikea-dark);
+    }
+
+    .summary-line.total .total-amount {
+      color: var(--ikea-blue);
+    }
+
+    .summary-line .fee-pending {
+      color: #888888;
+      font-style: italic;
+      font-size: 13px;
+    }
+
+    /* Discount Code Accordion */
+    .discount-toggle {
+      background: none;
+      border: none;
+      color: var(--ikea-blue);
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      padding: 6px 0;
+      margin: 14px 0 6px 0;
+    }
+
+    .discount-box {
+      display: none;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .discount-box.open {
+      display: flex;
+    }
+
+    .discount-input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1.5px solid var(--ikea-border);
+      border-radius: 6px;
+      font-size: 13px;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .discount-apply-btn {
+      background: var(--ikea-dark);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* Trust Links */
+    .trust-footer {
+      border-top: 1px solid #f0f0f0;
+      margin-top: 20px;
+      padding-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--ikea-text-muted);
+    }
+
+    /* Order Confirmation View */
+    .order-success-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 40px 32px;
+      border: 1px solid var(--ikea-border);
+      text-align: center;
+      max-width: 640px;
+      margin: 40px auto;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    }
+
+    .success-icon-wrap {
+      width: 72px;
+      height: 72px;
+      background: #e6f6ec;
+      color: var(--ikea-green);
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 2.5px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #ffffff;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="checkout-nav">
+    <div class="checkout-nav-inner">
+      <a href="/marketplace" class="ikea-logo-wrap">
+        <img src="/assets/image.png" alt="IKEA Logo"
+          style="height:34px;border-radius:3px;box-shadow:0 2px 8px rgba(0,88,163,0.2);" />
+        <span style="font-size:14px;font-weight:700;color:#666;">Circular Marketplace &bull; Order Checkout</span>
+      </a>
+      <div class="nav-secure-badge">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+        <span>256-bit SSL Data Encryption</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Checkout Container -->
+  <main class="checkout-container" id="checkout-main-grid">
+
+    <!-- Left Column: Sequential Accordion -->
+    <div class="checkout-flow-column">
+
+      <!-- STEP 1: DELIVERY OR COLLECT -->
+      <section class="accordion-section active" id="step-1-section">
+        <div class="accordion-header" id="step-1-header">
+          <div class="step-indicator-title">
+            <div class="step-number" id="step-1-badge">1</div>
+            <h2 class="step-title">Delivery or collect</h2>
+          </div>
+          <button class="step-edit-btn" id="step-1-edit-btn" style="display:none;">Edit</button>
+        </div>
+
+        <div class="step-completed-summary" id="step-1-summary">
+          <!-- Populated after Step 1 is completed -->
+        </div>
+
+        <div class="accordion-body" id="step-1-body">
+          <p style="font-size:14px;color:#555;margin-bottom:16px;">
+            Enter your 6-digit postal PIN code to see available delivery slots and store collection hubs.
+          </p>
+
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <div style="flex:1;">
+              <input type="text" id="pincode-input" class="form-input" placeholder="e.g. 560001, 400001, 110001"
+                maxlength="6" />
+              <div class="form-error-msg" id="pincode-error">Please enter a valid 6-digit postal code.</div>
+            </div>
+            <button type="button" id="lookup-pincode-btn" class="btn-ikea-primary"
+              style="margin-top:0;width:auto;padding:13px 22px;white-space:nowrap;" disabled>
+              Show delivery options
+            </button>
+          </div>
+
+          <!-- Serviceable Delivery Options (Dynamic Cards) -->
+          <div id="delivery-cards-container" style="display:none;margin-top:20px;">
+            <label class="form-label">Select fulfillment method:</label>
+            <div class="delivery-options-grid">
+
+              <!-- Card 1: Home Delivery -->
+              <div class="delivery-card selected" id="card-home-delivery"
+                onclick="window.selectDeliveryOption('home_delivery')">
+                <div>
+                  <div class="delivery-card-header">
+                    <input type="radio" name="delivery_choice" value="home_delivery" class="delivery-radio" checked />
+                    <div class="delivery-icon-wrap">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <rect x="1" y="3" width="15" height="13"></rect>
+                        <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                        <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                        <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                      </svg>
+                    </div>
+                    <span class="delivery-card-title">Home Delivery</span>
+                  </div>
+                  <p class="delivery-card-desc" id="home-delivery-estimate">Estimated delivery in 2-3 days</p>
+                </div>
+                <div class="delivery-card-fee" id="home-delivery-fee-label">₹299</div>
+              </div>
+
+              <!-- Card 2: Store Pickup -->
+              <div class="delivery-card" id="card-store-pickup" onclick="window.selectDeliveryOption('store_pickup')">
+                <div>
+                  <div class="delivery-card-header">
+                    <input type="radio" name="delivery_choice" value="store_pickup" class="delivery-radio" />
+                    <div class="delivery-icon-wrap">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                      </svg>
+                    </div>
+                    <span class="delivery-card-title">Store / Click & Collect</span>
+                  </div>
+                  <p class="delivery-card-desc">Ready for pickup in 2 hours</p>
+                </div>
+                <div class="delivery-card-fee free">FREE</div>
+              </div>
+            </div>
+
+            <!-- Store Selector for Click & Collect -->
+            <div id="store-picker-wrap" style="display:none;margin-top:16px;">
+              <label class="form-label">Select IKEA Hub / Store for Pickup:</label>
+              <select id="pickup-store-select" class="form-input" style="cursor:pointer;">
+                <option value="IKEA Nagasandra, Bengaluru">IKEA Nagasandra (Manjunatha Nagar, Bengaluru)</option>
+                <option value="IKEA Navi Mumbai">IKEA Navi Mumbai (Turbhe MIDC)</option>
+                <option value="IKEA R City Mall, Mumbai">IKEA R City (Ghatkopar West, Mumbai)</option>
+                <option value="IKEA HITEC City, Hyderabad">IKEA HITEC City (Raidurg, Hyderabad)</option>
+                <option value="IKEA Customer Hub, Delhi NCR">IKEA Hub (Sector 18, Noida)</option>
+              </select>
+            </div>
+
+            <button type="button" id="step-1-continue-btn" class="btn-ikea-primary">
+              Continue to details
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 2: DETAILS -->
+      <section class="accordion-section disabled" id="step-2-section">
+        <div class="accordion-header" id="step-2-header">
+          <div class="step-indicator-title">
+            <div class="step-number" id="step-2-badge">2</div>
+            <h2 class="step-title">Customer & address details</h2>
+          </div>
+          <button class="step-edit-btn" id="step-2-edit-btn" style="display:none;">Edit</button>
+        </div>
+
+        <div class="step-completed-summary" id="step-2-summary">
+          <!-- Populated after Step 2 is completed -->
+        </div>
+
+        <div class="accordion-body" id="step-2-body">
+          <form id="step-2-form">
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label class="form-label">Full Name *</label>
+                <input type="text" id="cust-name" class="form-input" placeholder="e.g. Rahul Sharma" required />
+                <div class="form-error-msg" id="name-error">Please enter your full name.</div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Mobile Phone Number *</label>
+                <input type="tel" id="cust-phone" class="form-input" placeholder="+91 9876543210" required />
+                <div class="form-error-msg" id="phone-error">Please enter a valid 10-digit mobile number.</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Email Address (for order tracking & invoice) *</label>
+              <input type="email" id="cust-email" class="form-input" placeholder="e.g. rahul@example.com" required />
+              <div class="form-error-msg" id="email-error">Please enter a valid email address.</div>
+            </div>
+
+            <div id="address-fields-wrap">
+              <div class="form-group">
+                <label class="form-label">Street Address / Building / Flat No *</label>
+                <input type="text" id="cust-address" class="form-input"
+                  placeholder="e.g. Flat 402, Green Valley Apartments, 5th Main" required />
+                <div class="form-error-msg" id="address-error">Please enter your complete address.</div>
+              </div>
+
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label class="form-label">City *</label>
+                  <input type="text" id="cust-city" class="form-input" value="Bengaluru" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">State *</label>
+                  <input type="text" id="cust-state" class="form-input" value="Karnataka" required />
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Delivery Instructions (Optional)</label>
+              <input type="text" id="cust-notes" class="form-input"
+                placeholder="e.g. Call before delivery / Leave at security desk" />
+            </div>
+
+            <button type="submit" class="btn-ikea-primary" id="step-2-continue-btn">
+              Continue to payment
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- STEP 3: PAYMENT -->
+      <section class="accordion-section disabled" id="step-3-section">
+        <div class="accordion-header" id="step-3-header">
+          <div class="step-indicator-title">
+            <div class="step-number" id="step-3-badge">3</div>
+            <h2 class="step-title">Payment</h2>
+          </div>
+        </div>
+
+        <div class="accordion-body" id="step-3-body">
+          <div
+            style="background:#f4f8fc;border:1.5px solid #c7ddf5;border-radius:10px;padding:18px;margin-bottom:20px;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0058a3" stroke-width="2">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                <line x1="1" y1="10" x2="23" y2="10"></line>
+              </svg>
+              <span style="font-size:16px;font-weight:800;color:#0058a3;">Razorpay Secure Payment Gateway</span>
+              <span
+                style="background:#e9aa56;color:#2b1b17;font-size:11px;font-weight:800;padding:2px 8px;border-radius:10px;margin-left:auto;">TEST
+                MODE</span>
+            </div>
+            <p style="font-size:13px;color:#444;line-height:1.4;">
+              Supports <strong>UPI (Google Pay, PhonePe, Paytm, BHIM)</strong>, <strong>Credit & Debit Cards</strong>,
+              <strong>NetBanking</strong>, and <strong>Wallets</strong> with instant cryptographic signature
+              verification.
+            </p>
+          </div>
+
+          <div id="payment-error-banner"
+            style="display:none;background:#fff2f4;border:1px solid #f5c2c7;color:#842029;padding:14px;border-radius:8px;font-size:13px;font-weight:600;margin-bottom:16px;">
+            <!-- Error message -->
+          </div>
+
+          <button type="button" id="pay-with-razorpay-btn" class="btn-ikea-primary"
+            style="background:#0058a3;font-size:16px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <span id="pay-btn-label">Pay with Razorpay</span>
+          </button>
+
+          <p style="font-size:12px;color:#777;text-align:center;margin-top:12px;">
+            Transactions are encrypted with end-to-end 256-bit TLS security.
+          </p>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Right Column: Sticky Order Summary Sidebar -->
+    <aside class="summary-card" id="sticky-summary-sidebar">
+      <div class="summary-header">
+        <h3 class="summary-title" id="sidebar-order-count">Your order (1 item)</h3>
+        <a href="/shopping-bag.html" style="font-size:13px;color:var(--ikea-blue);font-weight:700;text-decoration:none;">Edit
+          bag</a>
+      </div>
+
+      <!-- Item Thumbnail Rows -->
+      <div id="sidebar-items-list">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- Summary Calculations -->
+      <div style="margin-top:16px;">
+        <div class="summary-line">
+          <span>Products subtotal</span>
+          <span id="summary-products-subtotal" style="font-weight:700;">₹0</span>
+        </div>
+
+        <div class="summary-line">
+          <span>Delivery</span>
+          <span id="summary-delivery-fee" class="fee-pending">Price will be calculated after selection</span>
+        </div>
+
+        <div class="summary-line" id="discount-line" style="display:none;color:var(--ikea-green);">
+          <span>Discount Applied (<span id="discount-code-tag"></span>)</span>
+          <span id="summary-discount-val">-₹0</span>
+        </div>
+
+        <div class="summary-line">
+          <span>Estimated GST (18% included)</span>
+          <span id="summary-tax-val" style="font-weight:600;">₹0</span>
+        </div>
+
+        <div class="summary-line total">
+          <span>Total Payable</span>
+          <span class="total-amount" id="summary-total-val">₹0</span>
+        </div>
+      </div>
+
+      <!-- Collapsible Discount Code -->
+      <button type="button" class="discount-toggle" id="toggle-discount-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+          <line x1="7" y1="7" x2="7.01" y2="7"></line>
+        </svg>
+        <span>Apply discount code</span>
+      </button>
+
+      <div class="discount-box" id="discount-box">
+        <input type="text" id="discount-input" class="discount-input" placeholder="e.g. IKEA10" />
+        <button type="button" id="apply-discount-btn" class="discount-apply-btn">Apply</button>
+      </div>
+
+      <!-- Static Trust & Policy Links -->
+      <div class="trust-footer">
+        <div class="trust-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00853d" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          <span>30-day return policy (14 days for Circular Hub items)</span>
+        </div>
+        <div class="trust-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0058a3" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <span>Secure shopping with SSL data encryption</span>
+        </div>
+        <div class="trust-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+          <span>IKEA & SPYLT Certified Inspection Guarantee</span>
+        </div>
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- Full Order Confirmation View (Hidden Initially) -->
+  <div id="order-confirmation-screen" style="display:none;padding:0 20px;">
+    <div class="order-success-card">
+      <div class="success-icon-wrap">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+      <h1 style="font-size:26px;font-weight:900;color:var(--ikea-dark);margin-bottom:8px;">Thank You for Your Order!
+      </h1>
+      <p style="color:#555;font-size:15px;margin-bottom:24px;">
+        Your payment has been verified successfully. A confirmation receipt has been sent to your email.
+      </p>
+
+      <div
+        style="background:#f8f9fa;border:1px solid #e9ecef;border-radius:12px;padding:20px;text-align:left;margin-bottom:24px;font-size:14px;line-height:1.8;">
+        <div
+          style="display:flex;justify-content:space-between;border-bottom:1px solid #e5e5e5;padding-bottom:8px;margin-bottom:8px;">
+          <span style="color:#666;">Order ID:</span>
+          <strong id="confirm-order-id" style="color:var(--ikea-blue);font-family:monospace;font-size:15px;"></strong>
+        </div>
+        <div
+          style="display:flex;justify-content:space-between;border-bottom:1px solid #e5e5e5;padding-bottom:8px;margin-bottom:8px;">
+          <span style="color:#666;">Payment ID:</span>
+          <strong id="confirm-payment-id" style="font-family:monospace;font-size:13px;"></strong>
+        </div>
+        <div
+          style="display:flex;justify-content:space-between;border-bottom:1px solid #e5e5e5;padding-bottom:8px;margin-bottom:8px;">
+          <span style="color:#666;">Estimated Fulfillment:</span>
+          <strong id="confirm-delivery-estimate" style="color:var(--ikea-green);"></strong>
+        </div>
+        <div style="display:flex;justify-content:space-between;">
+          <span style="color:#666;">Total Amount Paid:</span>
+          <strong id="confirm-total-amount" style="font-size:16px;color:var(--ikea-dark);"></strong>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;justify-content:center;">
+        <a href="/marketplace" class="btn-ikea-primary" style="margin-top:0;width:auto;text-decoration:none;">
+          Return to Marketplace
+        </a>
+        <a href="/" class="btn-ikea-primary" style="margin-top:0;width:auto;background:#111;text-decoration:none;">
+          Back to IKEA Store
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- API SDK -->
+  <script src="/ecommerce-api.js"></script>
+
+  <!-- Checkout Logic Script -->
+  <script>
+    (function () {
+      // Checkout State
+      let checkoutState = {
+        currentStep: 1,
+        pincode: '',
+        deliveryMethod: 'home_delivery',
+        pickupStore: 'IKEA Nagasandra, Bengaluru',
+        deliveryFee: 299,
+        deliveryEstimate: 'Tuesday, 30 Sep',
+        customer: {
+          name: '',
+          phone: '',
+          email: '',
+          address: '',
+          city: 'Bengaluru',
+          state: 'Karnataka',
+          notes: ''
+        },
+        discountCode: null,
+        discountAmount: 0,
+        items: []
+      };
+
+      // Restore session state if available
+      try {
+        const saved = sessionStorage.getItem('ikea_checkout_saved_state');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          checkoutState = { ...checkoutState, ...parsed };
+        }
+      } catch (e) { }
+
+      // Parse Query Params (e.g. ?productId=sh-001 or direct item checkout)
+      const urlParams = new URLSearchParams(window.location.search);
+      const queryProductId = urlParams.get('productId');
+
+      // 1. Initialize Order Items
+      async function initOrderItems() {
+        if (queryProductId) {
+          try {
+            const products = await window.ecommerceAPI.request('/products');
+            const found = products.find(p => p.id === queryProductId);
+            if (found) {
+              checkoutState.items = [{
+                id: found.id,
+                name: found.name,
+                price: found.price,
+                quantity: 1,
+                image_url: found.image_url,
+                condition: found.condition || 'Verified Second-Hand'
+              }];
+            }
+          } catch (e) {
+            console.error('Failed to load item:', e);
+          }
+        }
+
+        // If no direct item in query, load from server cart
+        if (!checkoutState.items.length) {
+          try {
+            const cart = await window.ecommerceAPI.getCart();
+            if (cart.items && cart.items.length) {
+              checkoutState.items = cart.items.map(ci => ({
+                id: ci.product_id,
+                name: ci.product ? ci.product.name : 'IKEA Item',
+                price: ci.product ? ci.product.price : (ci.subtotal / ci.quantity),
+                quantity: ci.quantity,
+                image_url: ci.product ? ci.product.image_url : '/assets/6744ffba83bf874c1073eb88_favicon-CD9UqQ9M.jpg',
+                condition: ci.product && ci.product.is_second_hand ? (ci.product.condition || 'Verified Pre-Loved') : 'Brand New'
+              }));
+            }
+          } catch (e) {
+            console.error('Cart load error:', e);
+          }
+        }
+
+        // Default Fallback Item if empty
+        if (!checkoutState.items.length) {
+          checkoutState.items = [{
+            id: 'sh-001',
+            name: 'POÄNG Armchair (Pre-Loved)',
+            price: 4490,
+            quantity: 1,
+            image_url: 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&w=800&q=80',
+            condition: 'Like New • Circular Hub'
+          }];
+        }
+
+        renderSidebar();
+        restoreStepForms();
+      }
+
+      // 2. Render Sticky Order Summary Sidebar
+      function renderSidebar() {
+        const listEl = document.getElementById('sidebar-items-list');
+        const countEl = document.getElementById('sidebar-order-count');
+        const subtotalEl = document.getElementById('summary-products-subtotal');
+        const deliveryEl = document.getElementById('summary-delivery-fee');
+        const taxEl = document.getElementById('summary-tax-val');
+        const totalEl = document.getElementById('summary-total-val');
+        const payBtnLabel = document.getElementById('pay-btn-label');
+
+        const totalQty = checkoutState.items.reduce((sum, item) => sum + item.quantity, 0);
+        countEl.textContent = `Your order (${totalQty} ${totalQty === 1 ? 'item' : 'items'})`;
+
+        let subtotal = 0;
+        listEl.innerHTML = checkoutState.items.map(item => {
+          const itemSub = item.price * item.quantity;
+          subtotal += itemSub;
+          return `
+            <div class="order-item-row">
+              <img src="${item.image_url}" alt="${item.name}" class="order-item-img" onerror="this.src='/assets/6744ffba83bf874c1073eb88_favicon-CD9UqQ9M.jpg'" />
+              <div class="order-item-info">
+                <div class="order-item-name">${item.name}</div>
+                <div class="order-item-sub">Qty: ${item.quantity} &bull; ${item.condition}</div>
+                <div class="order-item-price">₹${itemSub.toLocaleString('en-IN')}</div>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        subtotalEl.textContent = `₹${subtotal.toLocaleString('en-IN')}`;
+
+        // Delivery Fee
+        let fee = 0;
+        if (checkoutState.currentStep >= 2 || checkoutState.pincode) {
+          if (checkoutState.deliveryMethod === 'store_pickup' || subtotal >= 5000) {
+            deliveryEl.textContent = 'FREE';
+            deliveryEl.className = 'delivery-card-fee free';
+            fee = 0;
+          } else {
+            deliveryEl.textContent = '₹299';
+            deliveryEl.className = 'summary-line';
+            fee = 299;
+          }
+        } else {
+          deliveryEl.textContent = 'Price will be calculated after selection';
+          deliveryEl.className = 'fee-pending';
+        }
+
+        // Discount
+        let discount = 0;
+        if (checkoutState.discountCode) {
+          const code = checkoutState.discountCode.toUpperCase();
+          if (code === 'IKEA10' || code === 'SPYLT10') {
+            discount = Math.round(subtotal * 0.10);
+          } else if (code === 'IKEA500' || code === 'SPYLT500') {
+            discount = Math.min(500, subtotal);
+          } else if (code === 'WELCOME2026') {
+            discount = Math.round(subtotal * 0.15);
+          }
+          document.getElementById('discount-line').style.display = 'flex';
+          document.getElementById('discount-code-tag').textContent = code;
+          document.getElementById('summary-discount-val').textContent = `-₹${discount.toLocaleString('en-IN')}`;
+        } else {
+          document.getElementById('discount-line').style.display = 'none';
+        }
+
+        // Calculations
+        const taxable = Math.max(0, subtotal - discount);
+        const tax = Math.round(taxable * 0.18);
+        const total = Math.round(taxable + fee + tax);
+
+        taxEl.textContent = `₹${tax.toLocaleString('en-IN')}`;
+        totalEl.textContent = `₹${total.toLocaleString('en-IN')}`;
+
+        if (payBtnLabel) {
+          payBtnLabel.textContent = `Pay ₹${total.toLocaleString('en-IN')} with Razorpay`;
+        }
+
+        checkoutState.calculatedTotal = total;
+        checkoutState.calculatedSubtotal = subtotal;
+        checkoutState.calculatedTax = tax;
+        checkoutState.deliveryFee = fee;
+
+        saveState();
+      }
+
+      function saveState() {
+        try {
+          sessionStorage.setItem('ikea_checkout_saved_state', JSON.stringify(checkoutState));
+        } catch (e) { }
+      }
+
+      // 3. Step 1: Pincode & Delivery Options
+      const pincodeInput = document.getElementById('pincode-input');
+      const lookupBtn = document.getElementById('lookup-pincode-btn');
+      const deliveryCardsContainer = document.getElementById('delivery-cards-container');
+      const pincodeError = document.getElementById('pincode-error');
+      const step1ContinueBtn = document.getElementById('step-1-continue-btn');
+
+      pincodeInput.addEventListener('input', function (e) {
+        const val = e.target.value.replace(/\D/g, '').substring(0, 6);
+        e.target.value = val;
+        pincodeError.style.display = 'none';
+        lookupBtn.disabled = (val.length !== 6);
+      });
+
+      lookupBtn.addEventListener('click', async function () {
+        const pin = pincodeInput.value.trim();
+        if (pin.length !== 6) return;
+
+        lookupBtn.disabled = true;
+        lookupBtn.innerHTML = '<span class="loading-spinner"></span> Checking...';
+
+        try {
+          const res = await window.ecommerceAPI.getDeliveryOptions(pin);
+          checkoutState.pincode = pin;
+          checkoutState.customer.city = res.city || 'Bengaluru';
+          checkoutState.customer.state = res.state || 'Karnataka';
+
+          document.getElementById('cust-city').value = checkoutState.customer.city;
+          document.getElementById('cust-state').value = checkoutState.customer.state;
+
+          const homeOpt = res.options.find(o => o.id === 'home_delivery');
+          if (homeOpt) {
+            document.getElementById('home-delivery-estimate').textContent = homeOpt.subtitle;
+            checkoutState.deliveryEstimate = homeOpt.estimated_date;
+          }
+
+          deliveryCardsContainer.style.display = 'block';
+          renderSidebar();
+        } catch (err) {
+          pincodeError.textContent = err.message || 'Pincode not serviceable';
+          pincodeError.style.display = 'block';
+        } finally {
+          lookupBtn.disabled = false;
+          lookupBtn.textContent = 'Check';
+        }
+      });
+
+      window.selectDeliveryOption = function (type) {
+        checkoutState.deliveryMethod = type;
+        const cardHome = document.getElementById('card-home-delivery');
+        const cardStore = document.getElementById('card-store-pickup');
+        const storePicker = document.getElementById('store-picker-wrap');
+
+        if (type === 'home_delivery') {
+          cardHome.classList.add('selected');
+          cardStore.classList.remove('selected');
+          cardHome.querySelector('input').checked = true;
+          storePicker.style.display = 'none';
+          document.getElementById('address-fields-wrap').style.display = 'block';
+        } else {
+          cardStore.classList.add('selected');
+          cardHome.classList.remove('selected');
+          cardStore.querySelector('input').checked = true;
+          storePicker.style.display = 'block';
+          document.getElementById('address-fields-wrap').style.display = 'none';
+        }
+        renderSidebar();
+      };
+
+      step1ContinueBtn.addEventListener('click', function () {
+        if (!checkoutState.pincode) return;
+
+        // Complete Step 1
+        const summaryText = checkoutState.deliveryMethod === 'home_delivery'
+          ? `&check; Home Delivery to ${checkoutState.pincode} (${checkoutState.customer.city}, ${checkoutState.customer.state}) &bull; Est: ${checkoutState.deliveryEstimate} &bull; ${checkoutState.deliveryFee === 0 ? 'FREE' : '₹299'}`
+          : `&check; Store Pickup at ${document.getElementById('pickup-store-select').value} &bull; FREE (Ready in 2 hrs)`;
+
+        document.getElementById('step-1-summary').innerHTML = summaryText;
+        document.getElementById('step-1-edit-btn').style.display = 'block';
+
+        setStep(2);
+      });
+
+      document.getElementById('step-1-edit-btn').addEventListener('click', () => setStep(1));
+      document.getElementById('step-2-edit-btn').addEventListener('click', () => setStep(2));
+
+      // 4. Step 2: Details Form
+      const step2Form = document.getElementById('step-2-form');
+
+      step2Form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const name = document.getElementById('cust-name').value.trim();
+        const phone = document.getElementById('cust-phone').value.trim();
+        const email = document.getElementById('cust-email').value.trim();
+        const address = document.getElementById('cust-address').value.trim();
+        const city = document.getElementById('cust-city').value.trim();
+        const state = document.getElementById('cust-state').value.trim();
+        const notes = document.getElementById('cust-notes').value.trim();
+
+        let valid = true;
+        if (name.length < 2) {
+          document.getElementById('name-error').style.display = 'block';
+          valid = false;
+        } else {
+          document.getElementById('name-error').style.display = 'none';
+        }
+
+        const phoneClean = phone.replace(/\D/g, '');
+        if (phoneClean.length < 10) {
+          document.getElementById('phone-error').style.display = 'block';
+          valid = false;
+        } else {
+          document.getElementById('phone-error').style.display = 'none';
+        }
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          document.getElementById('email-error').style.display = 'block';
+          valid = false;
+        } else {
+          document.getElementById('email-error').style.display = 'none';
+        }
+
+        if (checkoutState.deliveryMethod === 'home_delivery' && address.length < 5) {
+          document.getElementById('address-error').style.display = 'block';
+          valid = false;
+        } else {
+          document.getElementById('address-error').style.display = 'none';
+        }
+
+        if (!valid) return;
+
+        checkoutState.customer = { name, phone: phoneClean, email, address, city, state, notes };
+        checkoutState.pickupStore = document.getElementById('pickup-store-select').value;
+
+        // Complete Step 2
+        const summaryText = `&check; ${name} &bull; +91 ${phoneClean} &bull; ${email} ${checkoutState.deliveryMethod === 'home_delivery' ? `&bull; ${address}, ${city}` : `&bull; Pickup Hub: ${checkoutState.pickupStore}`}`;
+        document.getElementById('step-2-summary').innerHTML = summaryText;
+        document.getElementById('step-2-edit-btn').style.display = 'block';
+
+        setStep(3);
+      });
+
+      // Step Controller
+      function setStep(step) {
+        checkoutState.currentStep = step;
+        const s1 = document.getElementById('step-1-section');
+        const s2 = document.getElementById('step-2-section');
+        const s3 = document.getElementById('step-3-section');
+
+        s1.className = 'accordion-section' + (step === 1 ? ' active' : (step > 1 ? ' completed' : ''));
+        s2.className = 'accordion-section' + (step === 2 ? ' active' : (step > 2 ? ' completed' : (step < 2 ? ' disabled' : '')));
+        s3.className = 'accordion-section' + (step === 3 ? ' active' : (step < 3 ? ' disabled' : ''));
+
+        renderSidebar();
+      }
+
+      function restoreStepForms() {
+        if (checkoutState.pincode) {
+          pincodeInput.value = checkoutState.pincode;
+          lookupBtn.disabled = false;
+          deliveryCardsContainer.style.display = 'block';
+        }
+        if (checkoutState.customer.name) {
+          document.getElementById('cust-name').value = checkoutState.customer.name;
+          document.getElementById('cust-phone').value = checkoutState.customer.phone;
+          document.getElementById('cust-email').value = checkoutState.customer.email;
+          document.getElementById('cust-address').value = checkoutState.customer.address;
+          document.getElementById('cust-city').value = checkoutState.customer.city;
+          document.getElementById('cust-state').value = checkoutState.customer.state;
+        }
+      }
+
+      // 5. Discount Code Toggle
+      const discountToggle = document.getElementById('toggle-discount-btn');
+      const discountBox = document.getElementById('discount-box');
+      const applyDiscountBtn = document.getElementById('apply-discount-btn');
+
+      discountToggle.addEventListener('click', () => {
+        discountBox.classList.toggle('open');
+      });
+
+      applyDiscountBtn.addEventListener('click', () => {
+        const val = document.getElementById('discount-input').value.trim().toUpperCase();
+        if (['IKEA10', 'SPYLT10', 'IKEA500', 'SPYLT500', 'WELCOME2026'].includes(val)) {
+          checkoutState.discountCode = val;
+          renderSidebar();
+          discountBox.classList.remove('open');
+        } else {
+          alert('Invalid promo code. Try IKEA10 or SPYLT500');
+        }
+      });
+
+      // 6. Step 3: Razorpay Test Mode Checkout & Verification
+      const payBtn = document.getElementById('pay-with-razorpay-btn');
+      const errorBanner = document.getElementById('payment-error-banner');
+
+      payBtn.addEventListener('click', async function () {
+        errorBanner.style.display = 'none';
+        payBtn.disabled = true;
+        payBtn.innerHTML = '<span class="loading-spinner"></span> Creating secure order...';
+
+        try {
+          // 1. Create Order on Backend (Server Calculates Totals)
+          const orderPayload = {
+            customer_name: checkoutState.customer.name,
+            customer_email: checkoutState.customer.email,
+            customer_phone: checkoutState.customer.phone,
+            shipping_address: checkoutState.deliveryMethod === 'home_delivery' ? checkoutState.customer.address : checkoutState.pickupStore,
+            city: checkoutState.customer.city,
+            state: checkoutState.customer.state,
+            pincode: checkoutState.pincode,
+            delivery_method: checkoutState.deliveryMethod,
+            pickup_store: checkoutState.deliveryMethod === 'store_pickup' ? checkoutState.pickupStore : null,
+            discount_code: checkoutState.discountCode,
+            items: checkoutState.items.map(it => ({
+              product_id: it.id,
+              quantity: it.quantity,
+              selected_color: 'Standard'
+            })),
+            notes: checkoutState.customer.notes
+          };
+
+          const rzpOrder = await window.ecommerceAPI.createOrder(orderPayload);
+
+          // 2. Open Razorpay Checkout Modal
+          const options = {
+            key: rzpOrder.key_id,
+            amount: rzpOrder.amount_in_paise,
+            currency: rzpOrder.currency || "INR",
+            name: "IKEA & SPYLT Hub",
+            description: `Order #${rzpOrder.order_id}`,
+            image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=200&q=80",
+            order_id: rzpOrder.razorpay_order_id.startsWith("order_rzp_") ? undefined : rzpOrder.razorpay_order_id,
+            prefill: {
+              name: checkoutState.customer.name,
+              email: checkoutState.customer.email,
+              contact: checkoutState.customer.phone
+            },
+            theme: {
+              color: "#0058a3"
+            },
+            handler: async function (response) {
+              // 3. Payment Success Callback -> Cryptographic Server Verification
+              payBtn.innerHTML = '<span class="loading-spinner"></span> Verifying payment signature...';
+              try {
+                const verified = await window.ecommerceAPI.verifyPayment({
+                  order_id: rzpOrder.order_id,
+                  razorpay_order_id: rzpOrder.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id || `pay_rzp_${Date.now()}`,
+                  razorpay_signature: response.razorpay_signature || `sig_rzp_${Date.now()}`
+                });
+
+                showOrderSuccess(verified);
+              } catch (verErr) {
+                showPaymentError('Payment signature verification failed. Please contact support.');
+              }
+            },
+            modal: {
+              ondismiss: function () {
+                payBtn.disabled = false;
+                renderSidebar();
+              }
+            }
+          };
+
+          // 2. Open Razorpay Checkout Modal or Sandbox Test Verification
+          if (typeof Razorpay !== 'undefined' && !rzpOrder.key_id.startsWith("rzp_test_IKEASpylt2026")) {
+            const rzp = new Razorpay(options);
+            rzp.on('payment.failed', function (resp) {
+              showPaymentError(`Payment failed: ${resp.error.description || 'Transaction cancelled.'}`);
+            });
+            rzp.open();
+          } else {
+            // Test Mode Instant Verification
+            setTimeout(async () => {
+              try {
+                const simPayId = `pay_test_${Math.random().toString(36).substring(2, 10)}`;
+                const verified = await window.ecommerceAPI.verifyPayment({
+                  order_id: rzpOrder.order_id,
+                  razorpay_order_id: rzpOrder.razorpay_order_id,
+                  razorpay_payment_id: simPayId,
+                  razorpay_signature: `demo_sig_${rzpOrder.order_id}`
+                });
+                showOrderSuccess(verified);
+              } catch (verErr) {
+                showPaymentError('Payment verification failed.');
+              }
+            }, 600);
+          }
+        } catch (err) {
+          showPaymentError(err.message || 'Failed to initiate Razorpay order.');
+        }
+      });
+
+      function showPaymentError(msg) {
+        errorBanner.textContent = msg;
+        errorBanner.style.display = 'block';
+        payBtn.disabled = false;
+        renderSidebar();
+      }
+
+      function showOrderSuccess(order) {
+        sessionStorage.removeItem('ikea_checkout_saved_state');
+        document.getElementById('checkout-main-grid').style.display = 'none';
+        document.getElementById('order-confirmation-screen').style.display = 'block';
+
+        document.getElementById('confirm-order-id').textContent = order.id;
+        document.getElementById('confirm-payment-id').textContent = order.razorpay_payment_id || 'RZP-TEST-PAID';
+        document.getElementById('confirm-delivery-estimate').textContent = checkoutState.deliveryEstimate || 'Tuesday, 30 Sep 2026';
+        document.getElementById('confirm-total-amount').textContent = `₹${order.total_amount.toLocaleString('en-IN')}`;
+      }
+
+      // Initialize
+      initOrderItems();
+    })();
+  </script>
+</body>
+
+</html>

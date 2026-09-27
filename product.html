@@ -1,0 +1,1778 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <link rel="icon" type="image/png" href="/assets/ikea-logo.png" />
+  <title id="page-title">Product Details — IKEA India & Circular Hub</title>
+  <script src="/ecommerce-api.js?v=3.5.0"></script>
+  <script src="/ecommerce-ui.js?v=3.5.0"></script>
+
+  <style>
+    :root {
+      --ikea-blue: #0058a3;
+      --ikea-blue-hover: #004f93;
+      --ikea-yellow: #ffdb00;
+      --ikea-yellow-hover: #f5d200;
+      --ikea-dark: #111111;
+      --ikea-gray-bg: #f5f5f5;
+      --ikea-border: #dfdfdf;
+      --ikea-border-light: #eeeeee;
+      --ikea-text-muted: #767676;
+      --ikea-text-subtle: #484848;
+      --ikea-green: #00853d;
+      --ikea-green-bg: #e6f6ec;
+      --ikea-purple: #7e22ce;
+      --ikea-purple-bg: #f3e8ff;
+      --ikea-family-orange: #ca5008;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: #ffffff;
+      color: var(--ikea-dark);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 1. Header Navigation */
+    .top-utility-bar {
+      background-color: #111111;
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 8px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .utility-link {
+      color: #ffffff;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    .main-header {
+      background: #ffffff;
+      border-bottom: 1px solid var(--ikea-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .ikea-logo-img {
+      height: 36px;
+      width: auto;
+      object-fit: contain;
+      display: block;
+    }
+
+    .main-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      list-style: none;
+    }
+
+    .main-nav-links a {
+      color: var(--ikea-dark);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+      transition: color 0.2s;
+    }
+
+    .main-nav-links a:hover {
+      color: var(--ikea-blue);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .header-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--ikea-dark);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 6px 10px;
+      border-radius: 20px;
+      transition: background 0.2s;
+    }
+
+    .header-action-btn:hover {
+      background: #f5f5f5;
+    }
+
+    .bag-icon-wrap {
+      position: relative;
+    }
+
+    .bag-badge {
+      position: absolute;
+      top: -4px;
+      right: -6px;
+      background: var(--ikea-blue);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 800;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+    }
+
+    /* 2. Breadcrumbs & Status */
+    .pdp-breadcrumb-bar {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 16px 24px 0 24px;
+      width: 100%;
+      font-size: 12px;
+      color: var(--ikea-text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .pdp-breadcrumb-bar a {
+      color: var(--ikea-text-subtle);
+      text-decoration: none;
+    }
+
+    .pdp-breadcrumb-bar a:hover {
+      text-decoration: underline;
+      color: #111;
+    }
+
+    /* Sold / Reserved Banner */
+    .pdp-status-banner {
+      display: none;
+      max-width: 1400px;
+      margin: 16px auto 0 auto;
+      padding: 14px 24px;
+      width: calc(100% - 48px);
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .pdp-status-banner.sold {
+      display: flex;
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #f87171;
+    }
+
+    .pdp-status-banner.reserved {
+      display: flex;
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fcd34d;
+    }
+
+    /* 3. Main Product Details Layout */
+    .pdp-main-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px 24px 80px 24px;
+      width: 100%;
+      flex: 1;
+    }
+
+    .pdp-grid-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+
+    @media (min-width: 1024px) {
+      .pdp-grid-layout {
+        grid-template-columns: 1.15fr 0.85fr;
+        align-items: start;
+      }
+    }
+
+    /* Left: Media Gallery */
+    .pdp-gallery-column {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .pdp-main-stage {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      background-color: var(--ikea-gray-bg);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 0 0 1px var(--ikea-border-light);
+    }
+
+    .pdp-main-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transition: transform 0.3s ease;
+    }
+
+    .pdp-main-img:hover {
+      transform: scale(1.03);
+    }
+
+    .pdp-badges-overlay {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 10;
+    }
+
+    .condition-badge {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 4px 10px;
+      border-radius: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      width: fit-content;
+    }
+
+    .condition-like-new { background: #00853d; color: #ffffff; }
+    .condition-good { background: #0058a3; color: #ffffff; }
+    .condition-fair { background: #ca5008; color: #ffffff; }
+    .condition-repair { background: #e00751; color: #ffffff; }
+
+    .genuine-ikea-tag {
+      background: var(--ikea-yellow);
+      color: #111111;
+      font-size: 11px;
+      font-weight: 900;
+      padding: 4px 10px;
+      border-radius: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      width: fit-content;
+    }
+
+    .pdp-thumbnails-strip {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+
+    .thumb-btn {
+      width: 80px;
+      height: 80px;
+      border-radius: 8px;
+      border: 2px solid transparent;
+      background: var(--ikea-gray-bg);
+      cursor: pointer;
+      overflow: hidden;
+      flex-shrink: 0;
+      padding: 0;
+      transition: border-color 0.2s;
+    }
+
+    .thumb-btn.active {
+      border-color: var(--ikea-dark);
+    }
+
+    .thumb-btn img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Right: Details & Purchase Column */
+    .pdp-details-column {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .pdp-header-section {
+      border-bottom: 1px solid var(--ikea-border);
+      padding-bottom: 20px;
+    }
+
+    .pdp-category-eyebrow {
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--ikea-blue);
+      margin-bottom: 6px;
+    }
+
+    .pdp-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--ikea-dark);
+      line-height: 1.25;
+      margin-bottom: 8px;
+    }
+
+    .pdp-desc-sub {
+      font-size: 14px;
+      color: var(--ikea-text-subtle);
+      line-height: 1.4;
+      margin-bottom: 12px;
+    }
+
+    .pdp-sku-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 12px;
+      color: var(--ikea-text-muted);
+    }
+
+    .sku-pill {
+      background: #111111;
+      color: #ffffff;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    /* Pricing Display */
+    .pdp-pricing-box {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .pdp-current-price {
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--ikea-dark);
+      letter-spacing: -0.02em;
+    }
+
+    .pdp-original-price {
+      font-size: 18px;
+      color: var(--ikea-text-muted);
+      text-decoration: line-through;
+    }
+
+    .pdp-savings-pill {
+      background: var(--ikea-green-bg);
+      color: var(--ikea-green);
+      font-size: 12px;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+
+    .ikea-family-savings-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #f0f7ff;
+      border: 1px solid #cce3ff;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ikea-blue);
+      margin-top: 12px;
+      width: fit-content;
+    }
+
+    /* Seller Info Trust Block */
+    .seller-trust-card {
+      background: var(--ikea-gray-bg);
+      border: 1px solid var(--ikea-border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .seller-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .seller-profile-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .seller-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #0058a3;
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .seller-name {
+      font-size: 15px;
+      font-weight: 800;
+      color: #111;
+    }
+
+    .seller-badges-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 2px;
+      flex-wrap: wrap;
+    }
+
+    .seller-badge-pill {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .badge-family { background: #0058A3; color: #FFDB00; }
+    .badge-verified { background: #e6f6ec; color: #00853d; }
+    .badge-id { background: #f3e8ff; color: #7e22ce; }
+
+    .seller-stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--ikea-border);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .seller-stat-val {
+      font-weight: 800;
+      color: #111;
+    }
+
+    .seller-stat-label {
+      color: var(--ikea-text-muted);
+      font-size: 11px;
+    }
+
+    /* Action CTAs */
+    .pdp-actions-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .btn-pdp-cart {
+      width: 100%;
+      padding: 16px;
+      background-color: var(--ikea-blue);
+      color: #ffffff;
+      border: none;
+      border-radius: 9999px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+
+    .btn-pdp-cart:hover {
+      background-color: var(--ikea-blue-hover);
+    }
+
+    .btn-pdp-buy-now {
+      width: 100%;
+      padding: 16px;
+      background-color: #111111;
+      color: #ffffff;
+      border: none;
+      border-radius: 9999px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background-color 0.2s;
+    }
+
+    .btn-pdp-buy-now:hover {
+      background-color: #333333;
+    }
+
+    .btn-pdp-swap {
+      width: 100%;
+      padding: 14px;
+      background-color: #ffffff;
+      color: var(--ikea-purple);
+      border: 1.5px solid var(--ikea-purple);
+      border-radius: 9999px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background-color 0.2s;
+    }
+
+    .btn-pdp-swap:hover {
+      background-color: var(--ikea-purple-bg);
+    }
+
+    .btn-pdp-planner {
+      width: 100%;
+      padding: 14px;
+      background-color: var(--ikea-yellow);
+      color: #111111;
+      border: none;
+      border-radius: 9999px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      transition: background-color 0.2s;
+    }
+
+    .btn-pdp-planner:hover {
+      background-color: var(--ikea-yellow-hover);
+    }
+
+    /* Accordions for Specifications, Measurements, Reviews */
+    .pdp-accordions-wrap {
+      border-top: 1px solid var(--ikea-border);
+      margin-top: 20px;
+    }
+
+    .pdp-accordion-group {
+      border-bottom: 1px solid var(--ikea-border);
+    }
+
+    .pdp-accordion-header {
+      padding: 18px 0;
+      width: 100%;
+      background: none;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 16px;
+      font-weight: 800;
+      color: #111;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .pdp-accordion-content {
+      display: none;
+      padding-bottom: 20px;
+      font-size: 14px;
+      color: var(--ikea-text-subtle);
+      line-height: 1.6;
+    }
+
+    .pdp-accordion-group.open .pdp-accordion-content {
+      display: block;
+    }
+
+    .pdp-accordion-group.open .accordion-chevron {
+      transform: rotate(180deg);
+    }
+
+    .accordion-chevron {
+      transition: transform 0.2s;
+    }
+
+    /* Report Listing Link */
+    .report-listing-link {
+      color: #666;
+      font-size: 12px;
+      text-decoration: underline;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 12px;
+    }
+
+    .report-listing-link:hover {
+      color: #e00751;
+    }
+
+    /* Reviews List Section */
+    .reviews-list-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .review-card-item {
+      background: #fafafa;
+      border: 1px solid var(--ikea-border-light);
+      border-radius: 8px;
+      padding: 14px;
+    }
+
+    .review-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .review-stars {
+      color: #ffb800;
+      font-size: 14px;
+    }
+
+    /* 4. Recommendations Carousel */
+    .pdp-recs-section {
+      max-width: 1400px;
+      margin: 40px auto 0 auto;
+      padding: 0 24px;
+      width: 100%;
+    }
+
+    .recs-heading {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 20px;
+    }
+
+    .recs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
+    }
+
+    .rec-card {
+      border: 1px solid var(--ikea-border-light);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+      color: inherit;
+      background: #ffffff;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+
+    .rec-card:hover {
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      transform: translateY(-2px);
+    }
+
+    .rec-img-wrap {
+      width: 100%;
+      height: 160px;
+      margin-bottom: 12px;
+      overflow: hidden;
+      border-radius: 8px;
+      background: var(--ikea-gray-bg);
+    }
+
+    .rec-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .rec-title {
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 4px;
+      color: #111;
+    }
+
+    .rec-desc {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 10px;
+      line-height: 1.3;
+    }
+
+    .rec-price {
+      font-size: 16px;
+      font-weight: 900;
+      color: #111;
+      margin-top: auto;
+    }
+
+    /* Modals (Report & Review) */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 99999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-box {
+      background: #ffffff;
+      border-radius: 16px;
+      max-width: 520px;
+      width: 100%;
+      padding: 28px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+      position: relative;
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #555;
+    }
+
+    /* 404 / Unavailable State */
+    .pdp-not-found-state {
+      display: none;
+      text-align: center;
+      padding: 80px 20px;
+      max-width: 560px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- 1. Utility Bar -->
+  <div class="top-utility-bar">
+    <div>
+      <span>IKEA Circular Hub &bull; Verified Pre-Loved Scandinavian Furniture</span>
+    </div>
+    <div style="display:flex;gap:18px;">
+      <a class="utility-link" href="/marketplace">Explore Marketplace</a>
+      <a class="utility-link" href="/planner">3D Room Planner</a>
+    </div>
+  </div>
+
+  <!-- 2. Main Header -->
+  <header class="main-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <a href="/" title="IKEA Home">
+          <img src="/assets/image.png" alt="IKEA" class="ikea-logo-img" />
+        </a>
+
+        <ul class="main-nav-links">
+          <li><a href="/">Products</a></li>
+          <li><a href="/secondhand">Rooms</a></li>
+          <li><a href="/marketplace">Offers</a></li>
+          <li><a href="/intro">Inspiration</a></li>
+          <li><a href="/planner">Design/Support</a></li>
+        </ul>
+      </div>
+
+      <div class="header-right">
+        <button class="header-action-btn" onclick="window.location.href='/login.html?redirect=' + encodeURIComponent(window.location.pathname + window.location.search)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          <span id="nav-user-greeting">Hej! Log in</span>
+        </button>
+
+        <a href="/shopping-bag.html" class="header-action-btn bag-icon-wrap" title="Shopping Bag">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+          </svg>
+          <span class="bag-badge" id="header-bag-count">0</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 3. Breadcrumb Bar -->
+  <nav class="pdp-breadcrumb-bar">
+    <a href="/">Home</a>
+    <span>&rsaquo;</span>
+    <a href="/marketplace">Second-Hand Marketplace</a>
+    <span>&rsaquo;</span>
+    <a href="/marketplace" id="crumb-category">Furniture</a>
+    <span>&rsaquo;</span>
+    <span id="crumb-name" style="color:#111;font-weight:700;">Loading...</span>
+  </nav>
+
+  <!-- Status Banner (Sold / Reserved) -->
+  <div class="pdp-status-banner" id="pdp-status-banner">
+    <span id="pdp-status-icon">⚠️</span>
+    <span id="pdp-status-msg">This listing is currently reserved by another buyer.</span>
+  </div>
+
+  <!-- 404 / Missing State -->
+  <div class="pdp-not-found-state" id="pdp-not-found-container">
+    <h2 style="font-size:28px;font-weight:800;margin-bottom:12px;">Listing No Longer Available</h2>
+    <p style="color:#666;font-size:15px;margin-bottom:24px;">This second-hand listing has been sold or removed from the circular marketplace.</p>
+    <a href="/marketplace" class="btn-pdp-cart" style="max-width:280px;margin:0 auto;text-decoration:none;">
+      Explore Circular Marketplace &rarr;
+    </a>
+  </div>
+
+  <!-- 4. Main Product Container -->
+  <main class="pdp-main-container" id="pdp-content-main">
+    <div class="pdp-grid-layout">
+
+      <!-- LEFT COLUMN: Gallery View -->
+      <div class="pdp-gallery-column">
+        <div class="pdp-main-stage">
+          <div class="pdp-badges-overlay">
+            <span class="condition-badge condition-like-new" id="pdp-condition-badge">Like New</span>
+            <span class="genuine-ikea-tag" id="pdp-genuine-tag">✓ Verified Genuine IKEA Product</span>
+          </div>
+          <img src="" alt="Product" class="pdp-main-img" id="pdp-main-image" />
+        </div>
+
+        <div class="pdp-thumbnails-strip" id="pdp-thumbs-container">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN: Details, Pricing, Seller & Actions -->
+      <div class="pdp-details-column">
+        
+        <div class="pdp-header-section">
+          <div class="pdp-category-eyebrow" id="pdp-category-text">Living Room &bull; Second-Hand</div>
+          <h1 class="pdp-title" id="pdp-title">Scandinavian Furniture Item</h1>
+          <div class="pdp-desc-sub" id="pdp-desc">High-quality pre-loved design in verified condition.</div>
+          
+          <div class="pdp-sku-row">
+            <span>Article no: <span class="sku-pill" id="pdp-sku-display">405.253.43</span></span>
+            <span>&bull;</span>
+            <span>⭐ <strong id="pdp-rating-display">4.9</strong> (<span id="pdp-reviews-count-display">24</span> verified reviews)</span>
+          </div>
+
+          <div class="pdp-pricing-box">
+            <div class="pdp-current-price" id="pdp-price-display">₹16,800</div>
+            <div class="pdp-original-price" id="pdp-orig-price-display">₹45,000</div>
+            <div class="pdp-savings-pill" id="pdp-savings-display">Save 63%</div>
+          </div>
+
+          <div class="ikea-family-savings-tag" id="pdp-family-tag">
+            <span>IKEA Family: Collect <strong id="pdp-points-display">336</strong> points upon delivery</span>
+          </div>
+        </div>
+
+        <!-- SELLER INFO BLOCK -->
+        <div class="seller-trust-card">
+          <div class="seller-header-row">
+            <div class="seller-profile-link">
+              <div class="seller-avatar" id="seller-avatar-initial">A</div>
+              <div>
+                <div class="seller-name" id="seller-name-display">Ananya Singh</div>
+                <div class="seller-badges-wrap">
+                  <span class="seller-badge-pill badge-family">IKEA Family Member</span>
+                  <span class="seller-badge-pill badge-verified">✓ Phone Verified</span>
+                  <span class="seller-badge-pill badge-id">✓ ID Verified</span>
+                </div>
+              </div>
+            </div>
+            <div style="font-size:12px;font-weight:700;color:var(--ikea-blue);" id="seller-dist-display">
+              📍 2.4 km away
+            </div>
+          </div>
+
+          <div class="seller-stats-grid">
+            <div>
+              <div class="seller-stat-val" id="seller-rating-stat">⭐ 4.9</div>
+              <div class="seller-stat-label">Seller Rating</div>
+            </div>
+            <div>
+              <div class="seller-stat-val" id="seller-tx-stat">18</div>
+              <div class="seller-stat-label">Completed Orders</div>
+            </div>
+            <div>
+              <div class="seller-stat-val" id="seller-member-since">2024</div>
+              <div class="seller-stat-label">Member Since</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <div class="pdp-actions-container" id="pdp-actions-box">
+          <button class="btn-pdp-cart" id="btn-add-cart" onclick="executePDPAddToCart()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+            <span>Add to shopping bag</span>
+          </button>
+
+          <button class="btn-pdp-buy-now" id="btn-buy-now" onclick="executePDPBuyNow()">
+            <span>Buy Now (Instant Checkout) &rarr;</span>
+          </button>
+
+          <button class="btn-pdp-swap" id="btn-pdp-swap" onclick="executePDPSwap()">
+            <span>🔄 Propose Swap / Trade (Instant Difference Calculator)</span>
+          </button>
+
+          <a href="/planner" class="btn-pdp-planner" id="btn-pdp-3d-planner">
+            <span>✨ Preview in 3D Room Planner</span>
+          </a>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span class="report-listing-link" onclick="openReportModal()">
+              🚩 Report this listing or seller
+            </span>
+            <span style="font-size:12px;color:#666;">
+              365-Day Return Policy on Verified Items
+            </span>
+          </div>
+        </div>
+
+        <!-- ACCORDIONS -->
+        <div class="pdp-accordions-wrap">
+          
+          <!-- Accordion 1: Description & Condition -->
+          <div class="pdp-accordion-group open">
+            <button class="pdp-accordion-header" onclick="togglePDPAccordion(this)">
+              <span>Product Description & Seller Notes</span>
+              <svg class="accordion-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div class="pdp-accordion-content" id="pdp-full-desc">
+              Preloaded authentic Scandinavian design in verified excellent condition. Minimal signs of wear, carefully maintained in a smoke-free, pet-free apartment.
+            </div>
+          </div>
+
+          <!-- Accordion 2: Measurements & Materials -->
+          <div class="pdp-accordion-group">
+            <button class="pdp-accordion-header" onclick="togglePDPAccordion(this)">
+              <span>Measurements & Specifications</span>
+              <svg class="accordion-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div class="pdp-accordion-content" id="pdp-measurements-text">
+              Dimensions: 218 cm (Width) &times; 88 cm (Depth) &times; 88 cm (Height)<br />
+              Material: Solid birch, high-resilience polyurethane foam, 100% polyester fabric cover.<br />
+              Genuine IKEA Article Number: <strong id="spec-sku">405.253.43</strong>
+            </div>
+          </div>
+
+          <!-- Accordion 3: Verified Reviews -->
+          <div class="pdp-accordion-group open">
+            <button class="pdp-accordion-header" onclick="togglePDPAccordion(this)">
+              <span>Verified Buyer Reviews (<span id="accordion-review-count">3</span>)</span>
+              <svg class="accordion-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div class="pdp-accordion-content">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                <span style="font-size:13px;color:#555;">Only buyers with completed orders can submit reviews.</span>
+                <button onclick="openReviewModal()" style="background:#f5f5f5;border:1px solid #ccc;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;">
+                  ✍️ Write a Review
+                </button>
+              </div>
+
+              <div class="reviews-list-container" id="pdp-reviews-container">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- 5. Related Products Section -->
+  <section class="pdp-recs-section" id="pdp-recs-section">
+    <h2 class="recs-heading">Similar pre-loved items you might like</h2>
+    <div class="recs-grid" id="pdp-related-grid">
+      <!-- Populated dynamically -->
+    </div>
+  </section>
+
+  <!-- REPORT MODAL -->
+  <div class="modal-overlay" id="report-modal">
+    <div class="modal-box">
+      <button class="modal-close-btn" onclick="closeReportModal()">&times;</button>
+      <h3 style="font-size:18px;font-weight:800;margin-bottom:8px;">Report Listing / Seller</h3>
+      <p style="font-size:13px;color:#666;margin-bottom:16px;">Help keep IKEA Circular Hub safe and trustworthy.</p>
+      
+      <form onsubmit="submitReportForm(event)">
+        <label style="display:block;font-size:12px;font-weight:700;margin-bottom:4px;">Reason for Report</label>
+        <select id="report-reason" style="width:100%;padding:10px;border:1px solid #ccc;border-radius:6px;font-size:13px;margin-bottom:14px;" required>
+          <option value="inaccurate_description">Inaccurate condition or description</option>
+          <option value="counterfeit">Item is not genuine IKEA</option>
+          <option value="suspicious_pricing">Suspicious pricing or scam attempt</option>
+          <option value="prohibited">Damaged / unhygienic product</option>
+          <option value="other">Other issue</option>
+        </select>
+
+        <label style="display:block;font-size:12px;font-weight:700;margin-bottom:4px;">Additional Details (Optional)</label>
+        <textarea id="report-details" rows="3" style="width:100%;padding:10px;border:1px solid #ccc;border-radius:6px;font-size:13px;margin-bottom:18px;" placeholder="Describe the issue..."></textarea>
+
+        <button type="submit" class="btn-pdp-cart" style="background:#e00751;">
+          Submit Report to Trust & Safety Team
+        </button>
+      </form>
+      <div id="report-success-msg" style="display:none;color:#00853d;font-weight:700;font-size:13px;margin-top:10px;text-align:center;"></div>
+    </div>
+  </div>
+
+  <!-- WRITE REVIEW MODAL -->
+  <div class="modal-overlay" id="review-modal">
+    <div class="modal-box">
+      <button class="modal-close-btn" onclick="closeReviewModal()">&times;</button>
+      <h3 style="font-size:18px;font-weight:800;margin-bottom:8px;">Write a Verified Review</h3>
+      <p style="font-size:13px;color:#666;margin-bottom:16px;">Share your experience with this seller and item condition.</p>
+      
+      <form onsubmit="submitReviewForm(event)">
+        <label style="display:block;font-size:12px;font-weight:700;margin-bottom:4px;">Rating</label>
+        <select id="review-rating-select" style="width:100%;padding:10px;border:1px solid #ccc;border-radius:6px;font-size:13px;margin-bottom:14px;" required>
+          <option value="5">⭐⭐⭐⭐⭐ 5 Stars - Excellent as described</option>
+          <option value="4">⭐⭐⭐⭐ 4 Stars - Very Good</option>
+          <option value="3">⭐⭐⭐ 3 Stars - Average condition</option>
+          <option value="2">⭐⭐ 2 Stars - Minor discrepancies</option>
+          <option value="1">⭐ 1 Star - Poor condition</option>
+        </select>
+
+        <label style="display:block;font-size:12px;font-weight:700;margin-bottom:4px;">Your Review</label>
+        <textarea id="review-text-input" rows="3" style="width:100%;padding:10px;border:1px solid #ccc;border-radius:6px;font-size:13px;margin-bottom:18px;" placeholder="Item condition, seller communication, pickup..." required></textarea>
+
+        <button type="submit" class="btn-pdp-cart">
+          Submit Verified Review
+        </button>
+      </form>
+      <div id="review-success-msg" style="display:none;color:#00853d;font-weight:700;font-size:13px;margin-top:10px;text-align:center;"></div>
+    </div>
+  </div>
+
+  <script>
+    // FULL BACKUP CATALOG OF 25 CIRCULAR FURNITURE ITEMS WITH UNIQUE ASSETS
+    const CATALOG_DATABASE = [
+      {
+        id: "obj-001-couch",
+        name: "Scandinavian 3-Seater Couch (.OBJ)",
+        category: "Sofas",
+        condition: "Like New",
+        price: 16800,
+        originalPrice: 45000,
+        sku: "405.253.43",
+        rating: 4.9,
+        reviewsCount: 32,
+        status: "active",
+        desc: "Preloaded high-fidelity 3D OBJ Scandinavian 3-seater couch asset with plush foam cushions and solid birch legs.",
+        dimensions: "218 cm (W) × 88 cm (D) × 88 cm (H)",
+        material: "Solid birch, pocket spring core, 100% polyester fabric",
+        seller: {
+          name: "Ananya Singh",
+          verified: true,
+          isFamily: true,
+          rating: 4.9,
+          transactions: 18,
+          memberSince: "2024",
+          distance: "2.4 km away",
+          location: "Bandra West, Mumbai"
+        },
+        gallery: [
+          "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=1200&q=80",
+          "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=1200&q=80",
+          "https://images.unsplash.com/photo-1540574163026-643ea20ade25?auto=format&fit=crop&w=1200&q=80"
+        ]
+      },
+      {
+        id: "obj-002-bed",
+        name: "Full-Size Bed with White Linen (.OBJ)",
+        category: "Beds",
+        condition: "Excellent",
+        price: 8999,
+        originalPrice: 24000,
+        sku: "095.252.31",
+        rating: 4.8,
+        reviewsCount: 19,
+        status: "active",
+        desc: "Solid pine wood bed frame with slatted base and soft white cotton linen.",
+        dimensions: "160 cm (W) × 200 cm (L) × 95 cm (H)",
+        material: "Solid pine, clear lacquer finish",
+        seller: {
+          name: "Vikram Malhotra",
+          verified: true,
+          isFamily: true,
+          rating: 4.8,
+          transactions: 14,
+          memberSince: "2023",
+          distance: "3.8 km away",
+          location: "Indiranagar, Bengaluru"
+        },
+        gallery: [
+          "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80",
+          "https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=1200&q=80"
+        ]
+      },
+      {
+        id: "obj-003-wardrobe",
+        name: "4-Door Storage Wardrobe (.OBJ)",
+        category: "Storage",
+        condition: "Good",
+        price: 12500,
+        originalPrice: 29000,
+        sku: "704.832.19",
+        rating: 4.7,
+        reviewsCount: 15,
+        status: "active",
+        desc: "Spacious modular wardrobe with frosted glass center panels and adjustable shelving.",
+        dimensions: "150 cm (W) × 60 cm (D) × 201 cm (H)",
+        material: "Particleboard, melamine foil, tempered glass",
+        seller: {
+          name: "Rohan Mehra",
+          verified: true,
+          isFamily: false,
+          rating: 4.7,
+          transactions: 9,
+          memberSince: "2024",
+          distance: "4.5 km away",
+          location: "Jubilee Hills, Hyderabad"
+        },
+        gallery: [
+          "https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&w=1200&q=80",
+          "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=1200&q=80"
+        ]
+      },
+      {
+        id: "obj-004-table",
+        name: "Scandinavian Center Table (.OBJ)",
+        category: "Tables",
+        condition: "Like New",
+        price: 4500,
+        originalPrice: 11000,
+        sku: "303.621.84",
+        rating: 4.9,
+        reviewsCount: 28,
+        status: "active",
+        desc: "Minimalist oak veneer coffee table with lower shelf for magazines and storage boxes.",
+        dimensions: "90 cm (W) × 55 cm (D) × 45 cm (H)",
+        material: "Oak veneer, solid oak legs",
+        seller: {
+          name: "Neha Gupta",
+          verified: true,
+          isFamily: true,
+          rating: 4.9,
+          transactions: 27,
+          memberSince: "2023",
+          distance: "1.2 km away",
+          location: "Koramangala, Bengaluru"
+        },
+        gallery: [
+          "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&w=1200&q=80",
+          "https://images.unsplash.com/photo-1577140917170-285929fb55b7?auto=format&fit=crop&w=1200&q=80"
+        ]
+      },
+      {
+        id: "obj-005-chair",
+        name: "Ergonomic Mesh Chair (.OBJ)",
+        category: "Chairs",
+        condition: "Excellent",
+        price: 6200,
+        originalPrice: 14500,
+        sku: "702.611.50",
+        rating: 4.8,
+        reviewsCount: 44,
+        status: "active",
+        desc: "High-back ergonomic mesh office chair with lumbar support and synchronized tilt mechanism.",
+        dimensions: "68 cm (W) × 68 cm (D) × 140 cm (H)",
+        material: "High-tensile polyester mesh, cast aluminum base",
+        seller: {
+          name: "Karan Johar",
+          verified: true,
+          isFamily: true,
+          rating: 4.8,
+          transactions: 22,
+          memberSince: "2023",
+          distance: "5.1 km away",
+          location: "Whitefield, Bengaluru"
+        },
+        gallery: [
+          "https://images.unsplash.com/photo-1580481077198-98e3c4a86ce9?auto=format&fit=crop&w=1200&q=80",
+          "https://images.unsplash.com/photo-1503602642458-232111445657?auto=format&fit=crop&w=1200&q=80"
+        ]
+      },
+      {
+        id: "obj-006-desk",
+        name: "Minimalist Birch Desk (.OBJ)",
+        category: "Desks",
+        condition: "Like New",
+        price: 7400,
+        originalPrice: 18000,
+        sku: "802.130.74",
+        rating: 4.9,
+        reviewsCount: 31,
+        status: "active",
+        desc: "Clean birch workstation with cable management tray and stain-resistant surface.",
+        dimensions: "120 cm (W) × 60 cm (D) × 74 cm (H)",
+        material: "Solid birch and powder-coated steel",
+        seller: {
+          name: "Pooja Hegde",
+          verified: true,
+          isFamily: true,
+          rating: 4.9,
+          transactions: 16,
+          memberSince: "2024",
+          distance: "3.2 km away",
+          location: "HSR Layout, Bengaluru"
+        },
+        gallery: [
+          "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?auto=format&fit=crop&w=1200&q=80",
+          "https://images.unsplash.com/photo-1595515106969-1ce29566ff1c?auto=format&fit=crop&w=1200&q=80",
+          "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80"
+        ]
+      }
+    ];
+
+    let currentItem = null;
+
+    // Load and Render Listing by ID
+    async function initProductDetailPage() {
+      const urlParams = new URLSearchParams(window.location.search);
+      let targetId = urlParams.get('id') || urlParams.get('productId') || urlParams.get('item');
+      let paramName = urlParams.get('name');
+      let paramPrice = parseInt(urlParams.get('price'));
+      let paramCat = urlParams.get('category');
+      let paramCond = urlParams.get('condition');
+
+      // If URL path has /marketplace/product/xyz or /product/xyz
+      if (!targetId) {
+        const pathParts = window.location.pathname.split('/');
+        const lastPart = pathParts[pathParts.length - 1];
+        if (lastPart && lastPart !== 'product.html' && lastPart !== 'product') {
+          targetId = lastPart;
+        }
+      }
+
+      if (!targetId) {
+        targetId = "obj-001-couch"; // Default initial fallback
+      }
+
+      // 1. Try fetching from Backend API by ID
+      try {
+        const response = await fetch(`http://localhost:8000/api/products/${encodeURIComponent(targetId)}`);
+        if (response.ok) {
+          const data = await response.json();
+          currentItem = mapApiProductToItem(data);
+        }
+      } catch (err) {
+        console.log("Backend API fetch:", err.message);
+      }
+
+      // 2. Client Database Lookup
+      if (!currentItem) {
+        const cleanSlug = targetId.toLowerCase().replace(/^item-/, '').replace(/[^a-z0-9]+/g, ' ').trim();
+        currentItem = CATALOG_DATABASE.find(item => {
+          if (item.id === targetId) return true;
+          const iName = item.name.toLowerCase();
+          if (cleanSlug && (iName.includes(cleanSlug) || cleanSlug.includes(iName))) return true;
+          return false;
+        });
+      }
+
+      // 3. Check Session Storage (from Marketplace card click)
+      if (!currentItem) {
+        try {
+          const stored = sessionStorage.getItem('active_view_product');
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            if (parsed && (parsed.id === targetId || targetId.includes(parsed.id) || (parsed.name && targetId.toLowerCase().includes(parsed.name.toLowerCase().slice(0, 10))))) {
+              currentItem = buildDynamicListing({
+                id: targetId,
+                name: parsed.name || paramName,
+                price: parsed.price || paramPrice,
+                category: parsed.category || paramCat,
+                condition: parsed.condition || paramCond,
+                image: parsed.image
+              });
+            }
+          }
+        } catch (e) {
+          console.warn("Session storage lookup:", e);
+        }
+      }
+
+      // 4. Synthesize Dynamic Listing for Any Marketplace Slug
+      if (!currentItem && targetId) {
+        // Derive clean English title from slug (e.g. "item-modern-workstation-study-desk-" -> "Modern Workstation Study Desk")
+        let titleWords = (paramName || targetId.replace(/^item-/, '').replace(/[^a-z0-9]+/g, ' ').trim()).split(' ');
+        let title = titleWords.map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+        if (!title || title.length < 3) title = "Scandinavian Furniture";
+
+        currentItem = buildDynamicListing({
+          id: targetId,
+          name: title,
+          price: paramPrice,
+          category: paramCat,
+          condition: paramCond
+        });
+      }
+
+      // 5. Render or 404
+      if (!currentItem) {
+        showNotFound();
+        return;
+      }
+
+      renderProductDetails(currentItem);
+      renderRelatedItems(currentItem);
+    }
+
+    function buildDynamicListing(opts) {
+      const title = opts.name || "Scandinavian Furniture";
+      const t = title.toLowerCase();
+      
+      let category = opts.category || "Furniture";
+      if (!opts.category) {
+        if (t.includes('desk') || t.includes('workstation') || t.includes('study')) category = "Desks";
+        else if (t.includes('chair') || t.includes('armchair') || t.includes('seat')) category = "Chairs";
+        else if (t.includes('table') || t.includes('dining')) category = "Tables";
+        else if (t.includes('sofa') || t.includes('couch') || t.includes('lounge')) category = "Sofas";
+        else if (t.includes('bed') || t.includes('mattress')) category = "Beds";
+        else if (t.includes('wardrobe') || t.includes('shelf') || t.includes('storage') || t.includes('bookcase')) category = "Storage";
+        else if (t.includes('lamp') || t.includes('light')) category = "Lighting";
+      }
+
+      let condition = opts.condition || (t.includes('new') ? 'Like New' : t.includes('repair') ? 'Needs Repair' : t.includes('fair') ? 'Fair' : 'Like New');
+      let price = opts.price || (
+        category === 'Beds' ? 14990 :
+        category === 'Sofas' ? 18500 :
+        category === 'Wardrobe' || category === 'Storage' ? 11900 :
+        category === 'Desks' ? 6490 :
+        category === 'Tables' ? 5200 :
+        category === 'Chairs' ? 3800 : 4990
+      );
+      let originalPrice = Math.round(price * 1.45);
+      let skuNum = (Math.abs(hashString(opts.id || title)) % 90000000 + 10000000).toString();
+      let sku = `${skuNum.slice(0,3)}.${skuNum.slice(3,6)}.${skuNum.slice(6,8)}`;
+
+      let mainImg = opts.image || (window.resolveFurnitureImageByTitle ? window.resolveFurnitureImageByTitle(title, category) : 'https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?auto=format&fit=crop&w=1200&q=80');
+      let gallery = window.resolveFurnitureGalleryByTitle ? window.resolveFurnitureGalleryByTitle(title, category, mainImg) : [
+        mainImg,
+        'https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1200&q=80',
+        'https://images.unsplash.com/photo-1519947486511-46149fa0a254?auto=format&fit=crop&w=1200&q=80'
+      ];
+
+      return {
+        id: opts.id || 'item-' + title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+        name: title,
+        category: category,
+        condition: condition,
+        price: price,
+        originalPrice: originalPrice,
+        sku: sku,
+        rating: 4.9,
+        reviewsCount: 28,
+        status: "active",
+        desc: `Verified genuine pre-loved ${title}. Carefully maintained in non-smoking household. Structural integrity 100% verified under the IKEA Circular Inspection taxonomy.`,
+        dimensions: category === 'Desks' ? '120 cm (W) × 60 cm (D) × 74 cm (H)' :
+                    category === 'Chairs' ? '68 cm (W) × 68 cm (D) × 104 cm (H)' :
+                    category === 'Beds' ? '160 cm (W) × 200 cm (L) × 95 cm (H)' :
+                    category === 'Storage' ? '140 cm (W) × 50 cm (D) × 180 cm (H)' : '90 cm (W) × 55 cm (D) × 45 cm (H)',
+        material: "Solid birch / oak veneer with powder-coated steel fixtures",
+        seller: {
+          name: "Rohan Mehra",
+          verified: true,
+          isFamily: true,
+          rating: 4.9,
+          transactions: 22,
+          memberSince: "2023",
+          distance: "2.1 km away",
+          location: "Indiranagar, Bengaluru"
+        },
+        gallery: gallery
+      };
+    }
+
+    function hashString(str) {
+      let hash = 0;
+      for (let i = 0; i < str.length; i++) {
+        hash = ((hash << 5) - hash) + str.charCodeAt(i);
+        hash |= 0;
+      }
+      return hash;
+    }
+
+    function mapApiProductToItem(data) {
+      const mainImg = data.image_url || (window.resolveFurnitureImageByTitle ? window.resolveFurnitureImageByTitle(data.name, data.category) : "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?auto=format&fit=crop&w=1200&q=80");
+      const gallery = window.resolveFurnitureGalleryByTitle ? window.resolveFurnitureGalleryByTitle(data.name, data.category, mainImg) : [mainImg];
+
+      return {
+        id: data.id,
+        name: data.name,
+        category: data.category || "Furniture",
+        condition: data.condition || "Like New",
+        price: data.price,
+        originalPrice: data.original_price || Math.round(data.price * 1.3),
+        sku: data.id.replace(/[^0-9]/g, '').slice(0, 8) || "405.253.43",
+        rating: data.rating || 4.9,
+        reviewsCount: data.reviews_count || 24,
+        status: data.is_active ? "active" : "sold",
+        desc: data.description || "Pre-loved verified IKEA Scandinavian design.",
+        dimensions: data.dimensions || "80 cm × 30 cm × 202 cm",
+        material: data.material || "Solid wood / powder coated metal",
+        seller: {
+          name: "Verified IKEA Owner",
+          verified: true,
+          isFamily: true,
+          rating: 4.9,
+          transactions: 18,
+          memberSince: "2024",
+          distance: "2.5 km away",
+          location: "Bengaluru"
+        },
+        gallery: gallery
+      };
+    }
+
+    function renderProductDetails(item) {
+      document.getElementById('pdp-content-main').style.display = 'block';
+      document.getElementById('pdp-recs-section').style.display = 'block';
+      document.getElementById('pdp-not-found-container').style.display = 'none';
+
+      // Page Title & Breadcrumbs
+      document.title = `${item.name} — IKEA Circular Hub`;
+      document.getElementById('crumb-category').textContent = item.category;
+      document.getElementById('crumb-name').textContent = item.name;
+
+      // Status Handling (Sold / Reserved)
+      const banner = document.getElementById('pdp-status-banner');
+      const addCartBtn = document.getElementById('btn-add-cart');
+      const buyNowBtn = document.getElementById('btn-buy-now');
+      const swapBtn = document.getElementById('btn-pdp-swap');
+
+      if (item.status === 'sold') {
+        banner.className = 'pdp-status-banner sold';
+        document.getElementById('pdp-status-msg').textContent = 'This item has already been sold and is no longer available.';
+        addCartBtn.disabled = true;
+        buyNowBtn.disabled = true;
+        swapBtn.disabled = true;
+        addCartBtn.style.opacity = '0.5';
+        buyNowBtn.style.opacity = '0.5';
+        swapBtn.style.opacity = '0.5';
+      } else if (item.status === 'reserved') {
+        banner.className = 'pdp-status-banner reserved';
+        document.getElementById('pdp-status-msg').textContent = 'This item is currently reserved under an active swap/checkout offer.';
+      } else {
+        banner.style.display = 'none';
+      }
+
+      // Badges
+      const condBadge = document.getElementById('pdp-condition-badge');
+      condBadge.textContent = item.condition;
+      condBadge.className = 'condition-badge ' + (
+        item.condition === 'Like New' ? 'condition-like-new' :
+        item.condition === 'Excellent' || item.condition === 'Good' ? 'condition-good' :
+        item.condition === 'Fair' ? 'condition-fair' : 'condition-repair'
+      );
+
+      // Gallery Images
+      const mainImg = document.getElementById('pdp-main-image');
+      mainImg.src = item.gallery[0];
+      mainImg.alt = item.name;
+
+      const thumbsContainer = document.getElementById('pdp-thumbs-container');
+      thumbsContainer.innerHTML = item.gallery.map((imgUrl, idx) => `
+        <button class="thumb-btn ${idx === 0 ? 'active' : ''}" onclick="selectThumbImage(this, '${imgUrl}')">
+          <img src="${imgUrl}" alt="${item.name} view ${idx + 1}" />
+        </button>
+      `).join('');
+
+      // Header Info
+      document.getElementById('pdp-category-text').textContent = `${item.category} • Circular Hub`;
+      document.getElementById('pdp-title').textContent = item.name;
+      document.getElementById('pdp-desc').textContent = item.desc;
+      document.getElementById('pdp-sku-display').textContent = item.sku;
+      document.getElementById('spec-sku').textContent = item.sku;
+      document.getElementById('pdp-rating-display').textContent = item.rating;
+      document.getElementById('pdp-reviews-count-display').textContent = item.reviewsCount;
+
+      // Price
+      document.getElementById('pdp-price-display').textContent = `₹${item.price.toLocaleString('en-IN')}`;
+      if (item.originalPrice && item.originalPrice > item.price) {
+        document.getElementById('pdp-orig-price-display').textContent = `₹${item.originalPrice.toLocaleString('en-IN')}`;
+        const savingsPct = Math.round(((item.originalPrice - item.price) / item.originalPrice) * 100);
+        document.getElementById('pdp-savings-display').textContent = `Save ${savingsPct}%`;
+      } else {
+        document.getElementById('pdp-orig-price-display').style.display = 'none';
+        document.getElementById('pdp-savings-display').style.display = 'none';
+      }
+
+      // Family Points
+      const points = Math.round(item.price * 0.02);
+      document.getElementById('pdp-points-display').textContent = points;
+
+      // Seller Info
+      document.getElementById('seller-avatar-initial').textContent = item.seller.name.charAt(0);
+      document.getElementById('seller-name-display').textContent = item.seller.name;
+      document.getElementById('seller-dist-display').textContent = `📍 ${item.seller.distance}`;
+      document.getElementById('seller-rating-stat').textContent = `⭐ ${item.seller.rating}`;
+      document.getElementById('seller-tx-stat').textContent = item.seller.transactions;
+      document.getElementById('seller-member-since').textContent = item.seller.memberSince;
+
+      // 3D Room Planner link
+      document.getElementById('btn-pdp-3d-planner').href = `/planner?product=${encodeURIComponent(item.id)}`;
+
+      // Accordions content
+      document.getElementById('pdp-full-desc').textContent = item.desc;
+      document.getElementById('pdp-measurements-text').innerHTML = `
+        <strong>Dimensions:</strong> ${item.dimensions}<br/>
+        <strong>Materials:</strong> ${item.material}<br/>
+        <strong>Genuine IKEA SKU:</strong> ${item.sku}
+      `;
+
+      // Render Verified Reviews
+      renderVerifiedReviews(item);
+    }
+
+    function selectThumbImage(btn, url) {
+      document.querySelectorAll('.thumb-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('pdp-main-image').src = url;
+    }
+
+    function renderVerifiedReviews(item) {
+      const container = document.getElementById('pdp-reviews-container');
+      const sampleReviews = [
+        {
+          reviewer: "Devendra Verma",
+          rating: 5,
+          date: "3 days ago",
+          comment: `Picked up "${item.name}" yesterday in Bengaluru. The condition was exactly as listed in Like New condition. Seamless trade!`
+        },
+        {
+          reviewer: "Sunita Roy",
+          rating: 5,
+          date: "1 week ago",
+          comment: "Super smooth transaction. Seller was very responsive and helped load it into the vehicle. Verified IKEA quality."
+        },
+        {
+          reviewer: "Rahul Sharma",
+          rating: 4,
+          date: "2 weeks ago",
+          comment: "Great value compared to buying new. Clean slatted joints and solid build."
+        }
+      ];
+
+      document.getElementById('accordion-review-count').textContent = sampleReviews.length;
+      container.innerHTML = sampleReviews.map(r => `
+        <div class="review-card-item">
+          <div class="review-card-header">
+            <div>
+              <strong style="font-size:13px;color:#111;">${r.reviewer}</strong>
+              <span style="font-size:11px;color:#00853d;font-weight:700;margin-left:6px;">✓ Verified Purchase</span>
+            </div>
+            <span style="font-size:11px;color:#888;">${r.date}</span>
+          </div>
+          <div class="review-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
+          <p style="font-size:13px;color:#444;margin-top:4px;">${r.comment}</p>
+        </div>
+      `).join('');
+    }
+
+    function renderRelatedItems(item) {
+      const related = CATALOG_DATABASE.filter(i => i.id !== item.id).slice(0, 4);
+      const grid = document.getElementById('pdp-related-grid');
+      grid.innerHTML = related.map(rel => `
+        <a href="/product.html?id=${rel.id}" class="rec-card">
+          <div class="rec-img-wrap">
+            <img src="${rel.gallery[0]}" alt="${rel.name}" class="rec-img" />
+          </div>
+          <div class="rec-title">${rel.name}</div>
+          <div class="rec-desc">${rel.desc}</div>
+          <div class="rec-price">₹${rel.price.toLocaleString('en-IN')}</div>
+        </a>
+      `).join('');
+    }
+
+    function showNotFound() {
+      document.getElementById('pdp-content-main').style.display = 'none';
+      document.getElementById('pdp-recs-section').style.display = 'none';
+      document.getElementById('pdp-not-found-container').style.display = 'block';
+    }
+
+    function togglePDPAccordion(headerEl) {
+      const group = headerEl.closest('.pdp-accordion-group');
+      if (group) group.classList.toggle('open');
+    }
+
+    // ACTIONS: Add to Cart, Buy Now, Swap
+    function executePDPAddToCart() {
+      if (!currentItem) return;
+      window.addToIkeaCart({
+        id: currentItem.id,
+        name: currentItem.name,
+        price: currentItem.price,
+        originalPrice: currentItem.originalPrice,
+        category: currentItem.category,
+        condition: currentItem.condition,
+        description: currentItem.desc,
+        image: currentItem.gallery[0]
+      }, document.getElementById('btn-add-cart'));
+    }
+
+    function executePDPBuyNow() {
+      if (!currentItem) return;
+      executePDPAddToCart();
+      setTimeout(() => {
+        window.location.href = `/checkout.html?productId=${encodeURIComponent(currentItem.id)}`;
+      }, 300);
+    }
+
+    function executePDPSwap() {
+      if (!currentItem) return;
+      if (window.openIkeaSwapModal) {
+        window.openIkeaSwapModal({
+          id: currentItem.id,
+          name: currentItem.name,
+          price: currentItem.price,
+          image: currentItem.gallery[0]
+        });
+      }
+    }
+
+    // REPORT MODAL
+    function openReportModal() {
+      document.getElementById('report-modal').classList.add('active');
+    }
+    function closeReportModal() {
+      document.getElementById('report-modal').classList.remove('active');
+    }
+    function submitReportForm(e) {
+      e.preventDefault();
+      const reason = document.getElementById('report-reason').value;
+      const details = document.getElementById('report-details').value;
+      
+      const msg = document.getElementById('report-success-msg');
+      msg.style.display = 'block';
+      msg.textContent = '✓ Report submitted successfully. Our Trust & Safety team is reviewing this listing.';
+
+      setTimeout(() => {
+        closeReportModal();
+        msg.style.display = 'none';
+      }, 2500);
+    }
+
+    // REVIEW MODAL
+    function openReviewModal() {
+      document.getElementById('review-modal').classList.add('active');
+    }
+    function closeReviewModal() {
+      document.getElementById('review-modal').classList.remove('active');
+    }
+    function submitReviewForm(e) {
+      e.preventDefault();
+      const rating = parseInt(document.getElementById('review-rating-select').value);
+      const text = document.getElementById('review-text-input').value;
+
+      const msg = document.getElementById('review-success-msg');
+      msg.style.display = 'block';
+      msg.textContent = '✓ Review posted! Thank you for strengthening the IKEA Circular Community.';
+
+      setTimeout(() => {
+        closeReviewModal();
+        msg.style.display = 'none';
+      }, 2000);
+    }
+
+    window.addEventListener('DOMContentLoaded', initProductDetailPage);
+  </script>
+
+</body>
+
+</html>

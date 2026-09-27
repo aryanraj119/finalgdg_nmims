@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/assets/6744ffba83bf874c1073eb88_favicon-CD9UqQ9M.jpg" />
+  <link rel="preload" href="/assets/ProximaNova-Regular-BkyKiRiS.otf" as="font" type="font/otf"
+    crossorigin="anonymous">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SPYLT Milk</title>
+  <script type="module" crossorigin src="/assets/index-CxpCrW08.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-DR4cWJn1.css">
+</head>
+
+<body>
+  <div id="root"></div>
+</body>
+
+</html>
